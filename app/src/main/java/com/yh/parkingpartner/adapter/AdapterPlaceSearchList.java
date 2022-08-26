@@ -15,11 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.yh.parkingpartner.model.Place;
 import com.yh.parkingpartner.R;
-import com.yh.parkingpartner.ui.MainActivity;
 import com.yh.parkingpartner.ui.SearchActivity;
-import com.yh.parkingpartner.util.Util;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 public class AdapterPlaceSearchList extends RecyclerView.Adapter<AdapterPlaceSearchList.ViewHolder> {

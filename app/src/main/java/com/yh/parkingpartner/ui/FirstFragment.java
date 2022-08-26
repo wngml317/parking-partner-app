@@ -109,6 +109,7 @@ public class FirstFragment extends Fragment
         super.onCreate(savedInstanceState);
 
         mainActivity = (MainActivity) getActivity();
+        mainActivity.getSupportActionBar().setTitle("");
         blnCreatedView=false;
 
         locationManager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
@@ -409,7 +410,8 @@ public class FirstFragment extends Fragment
                 //통신실패 네트워크 자체 문제로 실패되는 경우
                 dismissProgress();
                 Toast.makeText(getContext(), "시스템에러발생 : "+t.getMessage(), Toast.LENGTH_LONG).show();
-                Log.i("로그", t.getMessage());
+                Log.i("로그", "시스템에러발생 : "+t.getMessage());
+                t.printStackTrace();
             }
         });
     }

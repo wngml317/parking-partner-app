@@ -31,8 +31,8 @@ public class Config {
     public static final String SP_KEY_START_PRK_AT="start_prk_at";
     // Img_prk-주차사진URL
     public static final String SP_KEY_IMG_PAK="Img_prk";
-    // prk_cmprt_co-주차구역
-    public static final String SP_KEY_PRK_CMPRT_CO="prk_cmprt_co";
+    // prk_area-주차구역
+    public static final String SP_KEY_PRK_AREA="prk_area";
     // parking_chrge_bs_time-기본시간
     public static final String SP_KEY_PARKING_CHRGE_BS_TIME="parking_chrge_bs_time";
     // parking_chrge_bs_chrg-기본요금

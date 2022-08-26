@@ -29,27 +29,32 @@
             <EditText
                 android:id="@+id/etxtSearch"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:ems="10"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="10"
+                android:background="@drawable/border"
                 android:hint="검색어 입력"
                 android:inputType="text"
                 android:lines="1"
                 android:maxLines="1"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:textSize="20sp" />
 
             <ImageView
                 android:id="@+id/imgSearchRun"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="0.3"
+                android:tint="@color/pp_main"
                 app:srcCompat="@drawable/ic_baseline_search_24" />
 
             <ImageView
                 android:id="@+id/imgSearchDel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="0.3"
+                android:tint="@color/pp_main"
                 app:srcCompat="@drawable/ic_baseline_search_off_24" />
 
         </LinearLayout>
