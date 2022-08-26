@@ -3,6 +3,7 @@ package com.yh.parkingpartner.ui;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -13,13 +14,18 @@ import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 import com.yh.parkingpartner.R;
 import com.yh.parkingpartner.config.Config;
 
 public class MainActivity extends AppCompatActivity {
 
+    BottomNavigationView navigationView;
     String accessToken;
     String name;
     String email;
@@ -29,16 +35,22 @@ public class MainActivity extends AppCompatActivity {
     private FragmentTransaction transaction;
     private FirstFragment firstFragment;
     private SecondFragment secondFragment;
+    private Fragment thirdFragment;
+    private Fragment fourthFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        navigationView = findViewById(R.id.bottonNavigationView);
+
         fragmentManager = getSupportFragmentManager();
         transaction = fragmentManager.beginTransaction();
         firstFragment = new FirstFragment();
         secondFragment = new SecondFragment();
+        thirdFragment = new ThirdFragment();
+        fourthFragment = new FourthFragment();
 
         //SharedPreferences 를 이용해서, 앱 내의 저장소에 영구저장된 데이터를 읽어오는 방법
         SharedPreferences sp = getApplication().getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
@@ -60,20 +72,44 @@ public class MainActivity extends AppCompatActivity {
         } else {
             transaction.replace(R.id.frameLayout, firstFragment).commitAllowingStateLoss();
         }
+
+        navigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                int itemId = item.getItemId();
+
+                Fragment fragment = null;
+
+                if(itemId == R.id.firstFragment){
+                    fragment = firstFragment;
+                    getSupportActionBar().setTitle("파킹파트너");
+                    getSupportActionBar().show();
+                }else if (itemId == R.id.secondFragment){
+                    fragment = secondFragment;
+                }else if (itemId == R.id.thirdFragment){
+                    fragment = thirdFragment;
+                }else if (itemId == R.id.fourthFragment) {
+                    fragment = fourthFragment;
+                }
+                return loadFragment(fragment);
+            }
+        });
+
     }
 
-    public void clickHandler(View view)
-    {
-        transaction = fragmentManager.beginTransaction();
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)    {
+        getMenuInflater().inflate(R.menu.actionbar_menu, menu);
+        return true;
+    }
 
-        switch(view.getId())
-        {
-            case R.id.FirstFragment:
-                transaction.replace(R.id.frameLayout, firstFragment).commitAllowingStateLoss();
-                break;
-            case R.id.SecondFragment:
-                transaction.replace(R.id.frameLayout, secondFragment).commitAllowingStateLoss();
-                break;
+    private boolean loadFragment(Fragment fragment) {
+        if (fragment != null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,fragment).commit();
+            return true;
         }
+        return false;
     }
+
 }
