@@ -102,7 +102,7 @@ public class SecondFragment extends Fragment {
     //네트워크 처리 보여주는 프로그래스 다이얼로그
     ProgressDialog progressDialog;
 
-    boolean blnSearchParkingLot;
+    boolean blnSearchParkingLot=true;
     // 주차완료정보 관련
     Data data=new Data();
 
@@ -162,12 +162,6 @@ public class SecondFragment extends Fragment {
         mainActivity = (MainActivity) getActivity();
         mainActivity.getSupportActionBar().setTitle("주차완료");
 
-        //SharedPreferences 를 읽어온다.
-        readSharedPreferences();
-        blnSearchParkingLot=(data.getPrk_id()==0 ? false : true);
-        if(!blnSearchParkingLot){
-            showProgress("현재 GPS좌표를 수신 중입니다...");
-        }
         locationManager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
         //gps 로케이션 위치 받아오는 리스너
         locationListener = new LocationListener() {
@@ -253,11 +247,32 @@ public class SecondFragment extends Fragment {
         etxtArea = rootView.findViewById(R.id.etxtArea);
         btnSave = rootView.findViewById(R.id.btnSave);
 
+        //SharedPreferences 를 읽어온다.
+        readSharedPreferences();
+        blnSearchParkingLot=(data.getPrk_id()==0 ? false : true);
+        if(!blnSearchParkingLot){
+            showProgress("현재 GPS좌표를 수신 중입니다...");
+        } else{
+            displayParkingLot();
+        }
+
         imgParking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //카메라로 사진을 찍을 것인지, 앨범에서 사진을 가져올 것인지 선택할 수 있게 알러트 다이얼로그를 띄운다.
                 showImageChoiceMethod();
+            }
+        });
+
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(data.getImg_prk().isEmpty()){
+                    Toast.makeText(getContext(), "주차 사진이 없습니다.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                getNetworkData(3);
             }
         });
 
@@ -282,8 +297,12 @@ public class SecondFragment extends Fragment {
         data.setPrk_id(sp.getInt(Config.SP_KEY_PRK_ID, 0));
         //prk_center_id-주차장ID
         data.setPrk_center_id(sp.getString(Config.SP_KEY_PRK_CENTER_ID, ""));
+        Log.i("로그", "getPrk_center_id : "+data.getPrk_center_id());
         //prk_plce_nm-주차장명
         data.setPrk_plce_nm(sp.getString(Config.SP_KEY_PRK_PLCE_NM, ""));
+        Log.i("로그", "getPrk_plce_nm : "+data.getPrk_plce_nm());
+        //prk_plce_adres-주차장주소
+        data.setPrk_plce_adres(sp.getString(Config.SP_KEY_PRK_PLCE_ADRES, ""));
         // start_prk_at-입차시간
         data.setStart_prk_at(sp.getString(Config.SP_KEY_START_PRK_AT, ""));
         // Img_prk-주차사진URL
@@ -302,6 +321,42 @@ public class SecondFragment extends Fragment {
         data.setParking_chrge_one_day_chrge(sp.getInt(Config.SP_KEY_PARKING_CHRGE_ONE_DAY_CHRGE, 0));
     }
 
+    void writeSharedPreferences(){
+        //SharedPreferences 를 이용해서, 앱 내의 저장소에 영구저장된 데이터를 읽어오는 방법
+        SharedPreferences sp = getActivity().getSharedPreferences(Config.SP_NAME, getActivity().MODE_PRIVATE);
+        //편집기를 만든다.
+        SharedPreferences.Editor editor = sp.edit();
+        //작성한다.
+        // 주차완료정보 관련
+        // prk_id-주차ID
+        editor.putInt(Config.SP_KEY_PRK_ID, data.getPrk_id());
+        //prk_center_id-주차장ID
+        editor.putString(Config.SP_KEY_PRK_CENTER_ID, data.getPrk_center_id());
+        //prk_plce_nm-주차장명
+        editor.putString(Config.SP_KEY_PRK_PLCE_NM, data.getPrk_plce_nm());
+        //prk_plce_adres-주차장주소
+        editor.putString(Config.SP_KEY_PRK_PLCE_ADRES, data.getPrk_plce_adres());
+        // start_prk_at-입차시간
+        editor.putString(Config.SP_KEY_START_PRK_AT, data.getStart_prk_at());
+        // Img_prk-주차사진URL
+        editor.putString(Config.SP_KEY_IMG_PAK, data.getImg_prk());
+        // prk_area-주차구역
+        editor.putString(Config.SP_KEY_PRK_AREA, data.getPrk_area());
+        // parking_chrge_bs_time-기본시간
+        editor.putInt(Config.SP_KEY_PARKING_CHRGE_BS_TIME, data.getParking_chrge_bs_time());
+        // parking_chrge_bs_chrg-기본요금
+        editor.putInt(Config.SP_KEY_PARKING_CHRGE_BS_CHRG, data.getParking_chrge_bs_chrg());
+        // parking_chrge_adit_unit_time-추가단위시간
+        editor.putInt(Config.SP_KEY_PARKING_CHRGE_ADIT_UNIT_TIME, data.getParking_chrge_adit_unit_time());
+        // parking_chrge_adit_unit_chrge-추가단위요금
+        editor.putInt(Config.SP_KEY_PARKING_CHRGE_ADIT_UNIT_CHRGE, data.getParking_chrge_adit_unit_chrge());
+        // parking_chrge_one_day_chrge-1일요금
+        editor.putInt(Config.SP_KEY_PARKING_CHRGE_ONE_DAY_CHRGE, data.getParking_chrge_one_day_chrge());
+
+        //저장한다.
+        editor.apply();
+    }
+
     private void getNetworkData(int pApiGbn) {
         if(pApiGbn==1) {
             // 주차장 찾기
@@ -318,6 +373,17 @@ public class SecondFragment extends Fragment {
                 //네트워크데이터를 보내고 있다는 프로그래스 다이얼로그를 먼저 띄운다..
                 showProgress("주차사진을 저장입니다...");
             } else {
+                return;
+            }
+        } else if(pApiGbn==3){
+            // 저장
+            if(data.getImg_prk().isEmpty()){
+                Toast.makeText(getContext(), "주차 사진이 없습니다.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if(data.getPrk_center_id().isEmpty()){
+                Toast.makeText(getContext(), "현재 입차한 주차장정보를 수신하지 못했습니다.", Toast.LENGTH_SHORT).show();
                 return;
             }
         }
@@ -345,6 +411,9 @@ public class SecondFragment extends Fragment {
             call = api.proximateParkingLot(params);
         } else if(pApiGbn==2) {
             call = api.parkingImgUpload(photoBody);
+        } else if(pApiGbn==3) {
+            data.setStart_prk_at(Util.getNowDateTime());
+            call = api.parkingComplete("Bearer " + accessToken, data);
         }
 
         call.enqueue(new Callback<DataListRes>() {
@@ -359,12 +428,19 @@ public class SecondFragment extends Fragment {
                         if(pApiGbn==1) {
                             Toast.makeText(getContext(), dataListRes.getCount() + "개의 주차장 정보 수신 완료.", Toast.LENGTH_LONG).show();
                             data = (Data) dataListRes.getItems().get(0);
+                            data.setPrk_id(0);
+                            data.setImg_prk("");
+                            data.setPrk_area("");
                             displayParkingLot();
                         }else if(pApiGbn==2) {
                             Toast.makeText(getContext(), "주차사진 저장 완료.", Toast.LENGTH_LONG).show();
                             data.setImg_prk(dataListRes.getImg_prk());
                             data.setPrk_area(dataListRes.getDetectedText());
                             displayParkingLot();
+                        }else if(pApiGbn==3) {
+                            Toast.makeText(getContext(), "저장 완료.", Toast.LENGTH_LONG).show();
+                            data.setPrk_id(dataListRes.getPrk_id());
+                            writeSharedPreferences();
                         }
                     }
                 } else {
@@ -402,7 +478,7 @@ public class SecondFragment extends Fragment {
         txtName.setText(data.getPrk_plce_nm());
         txtAddr.setText(data.getPrk_plce_adres());
         etxtArea.setText(data.getPrk_area());
-        if(data.getPrk_id()!=0) {
+        if(!data.getImg_prk().isEmpty()) {
             //클라이드 라이브러리 사용
             imgParking.setScaleType(ImageView.ScaleType.CENTER_CROP);
             GlideUrl url=new GlideUrl(data.getImg_prk(), new LazyHeaders.Builder().addHeader("User-Agent", "Android").build());

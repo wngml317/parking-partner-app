@@ -1,18 +1,27 @@
 package com.yh.parkingpartner.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DataListRes implements Serializable {
 
     private String result;
     private int count;
-    private List<Data> items;
+    private ArrayList<Data> items;
 
     int prk_id;                             //주차완료id
     String img_prk;                      //주차사진URL
     String  DetectedText;           //AWS 텍스트감지 결과 텍스트
     double Confidence;              //AWS 텍스트감지 결과 텍스트 확률
+
+    public ArrayList<Data> getItems() {
+        return items;
+    }
+
+    public void setItems(ArrayList<Data> items) {
+        this.items = items;
+    }
 
     public int getPrk_id() {
         return prk_id;
@@ -36,14 +45,6 @@ public class DataListRes implements Serializable {
 
     public void setCount(int count) {
         this.count = count;
-    }
-
-    public List<Data> getItems() {
-        return items;
-    }
-
-    public void setItems(List<Data> items) {
-        this.items = items;
     }
 
     public String getImg_prk() {
