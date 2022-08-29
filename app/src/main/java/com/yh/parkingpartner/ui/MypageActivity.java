@@ -1,12 +1,16 @@
 package com.yh.parkingpartner.ui;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -21,6 +25,7 @@ import com.yh.parkingpartner.adapter.MypageAdapter;
 import com.yh.parkingpartner.api.ApiMypageActivity;
 import com.yh.parkingpartner.api.NetworkClient;
 import com.yh.parkingpartner.config.Config;
+import com.yh.parkingpartner.model.MypageRes;
 import com.yh.parkingpartner.model.Review;
 import com.yh.parkingpartner.model.ReviewListRes;
 
@@ -34,7 +39,6 @@ import retrofit2.Retrofit;
 public class MypageActivity extends AppCompatActivity {
 
     String accessToken;
-
     RecyclerView recyclerView;
     ProgressBar progressBar;
     MypageAdapter adapter;
@@ -60,6 +64,11 @@ public class MypageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mypage);
 
+        // 액션바 타이틀 설정
+        getSupportActionBar().setTitle("마이페이지");
+        // 액션바 뒤로가기 버튼
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         txtResult = findViewById(R.id.txtResult);
         txtEmail = findViewById(R.id.txtEmail);
         txtName = findViewById(R.id.txtName);
@@ -70,12 +79,35 @@ public class MypageActivity extends AppCompatActivity {
         accessToken = sp.getString(Config.SP_KEY_ACCESS_TOKEN, "");
         txtEmail.setText(sp.getString(Config.SP_KEY_EMAIL, ""));
         txtName.setText(sp.getString(Config.SP_KEY_NAME, ""));
-        GlideUrl url = new GlideUrl(sp.getString(Config.SP_KEY_IMG_PROFILE, ""), new LazyHeaders.Builder().addHeader("User_Agent", "Android").build());
-        Glide.with(MypageActivity.this).load(url).placeholder(R.drawable.ic_baseline_person_24).into(imgProfile);
+        if (!sp.getString(Config.SP_KEY_IMG_PROFILE, "").equals("")) {
+            GlideUrl url = new GlideUrl(sp.getString(Config.SP_KEY_IMG_PROFILE, ""), new LazyHeaders.Builder().addHeader("User_Agent", "Android").build());
+            Glide.with(MypageActivity.this).load(url).placeholder(R.drawable.ic_baseline_person_24).into(imgProfile);
+        }
 
         btnTotal = (Button) findViewById(R.id.btnTotal);
         btnWrite = (Button) findViewById(R.id.btnWrite);
         btnUnwritten = (Button) findViewById(R.id.btnUnwritten);
+
+        Retrofit retrofit = NetworkClient.getRetrofitClient(MypageActivity.this, Config.PP_BASE_URL);
+        ApiMypageActivity api = retrofit.create(ApiMypageActivity.class);
+
+        Call<MypageRes> call = api.getMypage("Bearer " + accessToken);
+        call.enqueue(new Callback<MypageRes>() {
+            @Override
+            public void onResponse(Call<MypageRes> call, Response<MypageRes> response) {
+                if(response.isSuccessful()) {
+                    MypageRes data = response.body();
+                    btnTotal.setText("총 : " + data.getTotal_cnt());
+                    btnWrite.setText("작성 : " + data.getWrite_cnt());
+                    btnUnwritten.setText("미작성 : " + data.getUnwritten_cnt());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MypageRes> call, Throwable t) {
+
+            }
+        });
 
         btnTotal.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -224,5 +256,16 @@ public class MypageActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.INVISIBLE);
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+
+        if(itemId == android.R.id.home) {
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
