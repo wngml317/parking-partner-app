@@ -28,7 +28,7 @@ public class Data implements Serializable {
     int end_pay;                             //주차요금
 
     int charge;
-    int distance;
+    double distance;
     int available;
 
     public int getCharge() {
@@ -39,7 +39,7 @@ public class Data implements Serializable {
         this.charge = charge;
     }
 
-    public int getDistance() {
+    public double getDistance() {
         return distance;
     }
 
