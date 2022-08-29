@@ -9,6 +9,10 @@ public class DataListRes implements Serializable {
     private int count;
     private List<Data> items;
 
+    String img_prk;                      //주차사진URL
+    String  DetectedText;           //AWS 텍스트감지 결과 텍스트
+    double Confidence;              //AWS 텍스트감지 결과 텍스트 확률
+
     public String getResult() {
         return result;
     }
@@ -31,5 +35,29 @@ public class DataListRes implements Serializable {
 
     public void setItems(List<Data> items) {
         this.items = items;
+    }
+
+    public String getImg_prk() {
+        return img_prk;
+    }
+
+    public void setImg_prk(String img_prk) {
+        this.img_prk = img_prk;
+    }
+
+    public String getDetectedText() {
+        return DetectedText;
+    }
+
+    public void setDetectedText(String detectedText) {
+        DetectedText = detectedText;
+    }
+
+    public double getConfidence() {
+        return Confidence;
+    }
+
+    public void setConfidence(double confidence) {
+        Confidence = confidence;
     }
 }

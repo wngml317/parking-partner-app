@@ -2,7 +2,9 @@ package com.yh.parkingpartner.ui;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -236,6 +238,30 @@ public class FirstFragment extends Fragment
             @Override
             public void onClick(View view) {
                 cardView.setVisibility(View.GONE);
+            }
+        });
+
+        btnTmap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //알러트 다이얼로그(팝업)
+                AlertDialog.Builder alert=new AlertDialog.Builder(getContext());
+                alert.setTitle(prk_plce_nm.getText().toString());
+                alert.setMessage(prk_plce_adres.getText().toString()
+                        +"\n\nTmap앱 길안내로 이동하시겠습니까?");
+                alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // TODO: Tmap 연동 코딩...
+//                        Intent intent=new Intent();
+//                        startActivity(intent);
+                    }
+                });
+                alert.setNegativeButton("No", null);
+                //알러트 다이얼로그의 버튼을 안누르면, 화면이 넘어가지 않게..
+                alert.setCancelable(false);
+                //다이얼로그 화면에 보이기
+                alert.show();
             }
         });
 
