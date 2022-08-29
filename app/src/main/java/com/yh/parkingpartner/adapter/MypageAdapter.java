@@ -2,7 +2,6 @@ package com.yh.parkingpartner.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,21 +46,20 @@ public class MypageAdapter extends RecyclerView.Adapter<MypageAdapter.ViewHolder
         holder.txtStart.setText("입차시간 : " + review.getStart_prk_at().replace("T", " ").substring(0, 16));
         holder.txtEnd.setText("출차시간 : " + review.getEnd_prk().replace("T", " ").substring(0, 16));
         holder.txtPrkArea.setText("구역 : " + review.getPrk_area());
-
+        holder.txtPay.setText("요금 ( " + review.getParking_chrge_bs_time() + "분 / " + review.getParking_chrge_bs_chrg() + "원 )");
         time = review.getUse_prk_at().split(":");
-        Log.i("time 0: ", time[0]);
-
-        Log.i("time 1: ", time[1]);
         if (time[0].equals("0") ) {
-            holder.txtPay.setText("요금 : " + time[1] + "분"+" / " + review.getEnd_pay() + "원");
+            holder.txtUsePay.setText(" : "+time[1] + "분"+" / " + review.getEnd_pay() + "원");
         } else {
             if (review.getUse_prk_at().contains("day")) {
-                holder.txtPay.setText("요금 : " + time[0] + "시간 " + time[1] + "분"+" / " + review.getEnd_pay() + "원");
+                holder.txtUsePay.setText(" : "+time[0] + "시간 " + time[1] + "분"+" / " + review.getEnd_pay() + "원");
             } else {
-                holder.txtPay.setText("요금 : " + time[0] + "시간 " + time[1] + "분"+" / " + review.getEnd_pay() + "원");
+                holder.txtUsePay.setText(" : "+time[0] + "시간 " + time[1] + "분"+" / " + review.getEnd_pay() + "원");
             }
         }
+
         Glide.with(context).load(review.getImg_prk()).placeholder(R.drawable.ic_baseline_photo_camera_back_24).into(holder.imgPrk);
+
         if (review.getRating() == 0) {
             holder.btnReview.setText("리뷰 작성");
         } else {
@@ -84,6 +82,7 @@ public class MypageAdapter extends RecyclerView.Adapter<MypageAdapter.ViewHolder
         TextView txtEnd;
         TextView txtPrkArea;
         TextView txtPay;
+        TextView txtUsePay;
         ImageView imgPrk;
         Button btnReview;
         RatingBar ratingBar;
@@ -97,12 +96,20 @@ public class MypageAdapter extends RecyclerView.Adapter<MypageAdapter.ViewHolder
             txtEnd = itemView.findViewById(R.id.txtEnd);
             txtPrkArea = itemView.findViewById(R.id.txtPrkArea);
             txtPay = itemView.findViewById(R.id.txtPay);
+            txtUsePay = itemView.findViewById(R.id.txtUsePay);
             imgPrk = itemView.findViewById(R.id.imgPrk);
             btnReview = itemView.findViewById(R.id.btnReview);
             ratingBar = itemView.findViewById(R.id.ratingBar);
 
+            // todo -- 리뷰작성 / 수정 페이지 이동
+            btnReview.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int index = getAdapterPosition();
+                    Review review = reviewList.get(index);
+
+                }
+            });
         }
-
-
     }
 }

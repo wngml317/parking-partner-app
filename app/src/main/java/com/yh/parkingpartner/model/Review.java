@@ -6,6 +6,8 @@ public class Review {
     private String prk_plce_adres;
     private String start_prk_at;
     private String end_prk;
+    private int parking_chrge_bs_time;
+    private int parking_chrge_bs_chrg;
     private String img_prk;
     private String prk_area;
     private String use_prk_at;
@@ -51,6 +53,22 @@ public class Review {
 
     public void setEnd_prk(String end_prk) {
         this.end_prk = end_prk;
+    }
+
+    public int getParking_chrge_bs_time() {
+        return parking_chrge_bs_time;
+    }
+
+    public void setParking_chrge_bs_time(int parking_chrge_bs_time) {
+        this.parking_chrge_bs_time = parking_chrge_bs_time;
+    }
+
+    public int getParking_chrge_bs_chrg() {
+        return parking_chrge_bs_chrg;
+    }
+
+    public void setParking_chrge_bs_chrg(int parking_chrge_bs_chrg) {
+        this.parking_chrge_bs_chrg = parking_chrge_bs_chrg;
     }
 
     public String getImg_prk() {
