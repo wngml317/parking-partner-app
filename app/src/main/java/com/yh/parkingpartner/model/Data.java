@@ -19,6 +19,98 @@ public class Data implements Serializable {
     int parking_chrge_one_day_chrge;      // 1일요금 0,
     float rating;                                           // 별점평균 0.0,
 
+    int prk_id;                             //주차완료id
+    String start_prk_at;                //주차입차시간
+    String img_prk;                      //주차사진URL
+    String prk_area;                     //주차구역
+    String end_prk;                      //주차출차시간
+    int use_prk_at;                      //주차시간(분)
+    int end_pay;                             //주차요금
+
+    int charge;
+    int distance;
+    int available;
+
+    public int getCharge() {
+        return charge;
+    }
+
+    public void setCharge(int charge) {
+        this.charge = charge;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
+
+    public int getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(int available) {
+        this.available = available;
+    }
+
+    public int getPrk_id() {
+        return prk_id;
+    }
+
+    public void setPrk_id(int prk_id) {
+        this.prk_id = prk_id;
+    }
+
+    public String getStart_prk_at() {
+        return start_prk_at;
+    }
+
+    public void setStart_prk_at(String start_prk_at) {
+        this.start_prk_at = start_prk_at;
+    }
+
+    public String getImg_prk() {
+        return img_prk;
+    }
+
+    public void setImg_prk(String img_prk) {
+        this.img_prk = img_prk;
+    }
+
+    public String getPrk_area() {
+        return prk_area;
+    }
+
+    public void setPrk_area(String prk_area) {
+        this.prk_area = prk_area;
+    }
+
+    public String getEnd_prk() {
+        return end_prk;
+    }
+
+    public void setEnd_prk(String end_prk) {
+        this.end_prk = end_prk;
+    }
+
+    public int getUse_prk_at() {
+        return use_prk_at;
+    }
+
+    public void setUse_prk_at(int use_prk_at) {
+        this.use_prk_at = use_prk_at;
+    }
+
+    public int getEnd_pay() {
+        return end_pay;
+    }
+
+    public void setEnd_pay(int end_pay) {
+        this.end_pay = end_pay;
+    }
+
     public float getRating() {
         return rating;
     }
