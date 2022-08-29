@@ -9,9 +9,18 @@ public class DataListRes implements Serializable {
     private int count;
     private List<Data> items;
 
+    int prk_id;                             //주차완료id
     String img_prk;                      //주차사진URL
     String  DetectedText;           //AWS 텍스트감지 결과 텍스트
     double Confidence;              //AWS 텍스트감지 결과 텍스트 확률
+
+    public int getPrk_id() {
+        return prk_id;
+    }
+
+    public void setPrk_id(int prk_id) {
+        this.prk_id = prk_id;
+    }
 
     public String getResult() {
         return result;
