@@ -96,7 +96,7 @@ public class ParkListActivity extends AppCompatActivity {
                 btnCharge.setEnabled(true);
                 btnSpot.setEnabled(true);
 
-                String order = "distance";
+                order = "distance";
 
                 getNetworkData();
             }
@@ -109,7 +109,7 @@ public class ParkListActivity extends AppCompatActivity {
                 btnCharge.setEnabled(false);
                 btnSpot.setEnabled(true);
 
-                String order = "charge";
+                order = "charge";
 
                 getNetworkData();
             }
@@ -122,7 +122,7 @@ public class ParkListActivity extends AppCompatActivity {
                 btnCharge.setEnabled(true);
                 btnSpot.setEnabled(false);
 
-                String order = "available";
+                order = "available";
 
                 getNetworkData();
             }
@@ -176,9 +176,9 @@ public class ParkListActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
                 if (response.isSuccessful()) {
                     DataListRes data  = response.body();
+                    dataList.addAll(data.getItems());
 
-
-                    count = response.body().getCount();
+                    count = data.getCount();
 
                     offset = offset + count;
 

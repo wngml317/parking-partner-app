@@ -73,6 +73,7 @@ public class AdapterParkList extends RecyclerView.Adapter<AdapterParkList.ViewHo
             txtTitle = itemView.findViewById(R.id.txtTitle);
             txtCharge = itemView.findViewById(R.id.txtCharge);
             txtCount = itemView.findViewById(R.id.txtCount);
+            cardView = itemView.findViewById(R.id.cardView);
 
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
