@@ -56,7 +56,11 @@ public class ParkListActivity extends AppCompatActivity {
     int count = 0;
     String order = "distance";
     int offset = 0;
-    int limit = 10;
+    int limit = 30;
+
+    double latitude;
+    double longitude;
+    String title;
 
 
     //네트워크 처리 보여주는 프로그래스 다이얼로그
@@ -68,8 +72,13 @@ public class ParkListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parklist);
 
+        title = getIntent().getStringExtra("title");
+        latitude = getIntent().getDoubleExtra("latitude",0);
+        longitude = getIntent().getDoubleExtra("longitude",0);
+
+
         //액티비티 액션바 타이틀
-        getSupportActionBar().setTitle("정렬 옵션");
+        getSupportActionBar().setTitle(title);
         //액티비티 액션바 백버튼 셋팅
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -130,6 +139,8 @@ public class ParkListActivity extends AppCompatActivity {
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(ParkListActivity.this));
+
+        //리스트를 맨 밑에까지 가면 알수 있는 방법,, 스크롤 리스너 이벤트
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -165,11 +176,12 @@ public class ParkListActivity extends AppCompatActivity {
 
 
 
+
         Retrofit retrofit = NetworkClient.getRetrofitClient(ParkListActivity.this, Config.PP_BASE_URL);
         ApiParkingActivity api = retrofit.create(ApiParkingActivity.class);
 
 
-        Call<DataListRes> call = api.getParkingList(37.5698848951,127.1839919249,order,offset,limit);
+        Call<DataListRes> call = api.getParkingList(latitude,longitude,order,offset,limit);
         call.enqueue(new Callback<DataListRes>() {
             @Override
             public void onResponse(Call<DataListRes> call, Response<DataListRes> response) {
@@ -228,7 +240,9 @@ public class ParkListActivity extends AppCompatActivity {
         SharedPreferences sp = getApplication().getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
         String accessToken = sp.getString("accessToken", "");
 
-        Call<DataListRes> call = api.getParkingList(37.5698848951, 127.1839919249, "charge", 0, 10);
+
+
+        Call<DataListRes> call = api.getParkingList(37.5698848951,127.1839919249,order, offset, limit);
         call.enqueue(new Callback<DataListRes>() {
             @Override
             public void onResponse(Call<DataListRes> call, Response<DataListRes> response) {
