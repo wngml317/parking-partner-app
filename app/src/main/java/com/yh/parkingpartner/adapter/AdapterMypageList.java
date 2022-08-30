@@ -1,7 +1,6 @@
 package com.yh.parkingpartner.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,22 +18,22 @@ import com.yh.parkingpartner.model.Review;
 
 import java.util.List;
 
-public class MypageAdapter extends RecyclerView.Adapter<MypageAdapter.ViewHolder> {
+public class AdapterMypageList extends RecyclerView.Adapter<AdapterMypageList.ViewHolder> {
 
     Context context;
     List<Review> reviewList;
     String[] time;
 
-    public MypageAdapter(Context context, List<Review> reviewList) {
+    public AdapterMypageList(Context context, List<Review> reviewList) {
         this.context = context;
         this.reviewList = reviewList;
     }
 
     @NonNull
     @Override
-    public MypageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.mypage_row, parent, false);
-        return new MypageAdapter.ViewHolder(view);
+    public AdapterMypageList.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.mypagelist_row, parent, false);
+        return new AdapterMypageList.ViewHolder(view);
     }
 
     @Override
