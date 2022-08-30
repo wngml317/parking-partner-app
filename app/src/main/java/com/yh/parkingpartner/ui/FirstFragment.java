@@ -90,6 +90,7 @@ public class FirstFragment extends Fragment
     ImageView imgListView;
     ImageView imgDestinationSerarch;
 
+
     LinearLayout cardView;
     Button btnTmap;
     ImageView imgClose;
@@ -208,6 +209,17 @@ public class FirstFragment extends Fragment
                 getNetworkData(Util.MAP_MY_ARROUND, null, null);
             }
         });
+
+        imgListView.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                // 목록보기 액티비티 호출
+                Intent intent=new Intent(getContext(), ParkListActivity.class);
+                startActivityForResult(intent, Util.AUTOCOMPLETE_REQUEST_CODE);
+            }
+        });
+
 
         imgDestinationSerarch.setOnClickListener(new View.OnClickListener() {
             @Override
