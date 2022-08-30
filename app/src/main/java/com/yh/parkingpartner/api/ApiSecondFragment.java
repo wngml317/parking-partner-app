@@ -16,7 +16,9 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Part;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 
@@ -50,4 +52,11 @@ public interface ApiSecondFragment {
             @Body Data data
     );
 
+    // 주차완료수정 : /parkLct/<int:parking_id>
+    @PUT("/parkLct/{parking_id}")
+    Call<DataListRes> parkingUpdate(
+            @Header("Authorization") String token,
+            @Path("parking_id") int prk_id,
+            @Body Data data
+    );
 }

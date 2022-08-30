@@ -390,7 +390,7 @@ public class SecondFragment extends Fragment {
             showProgress("저장 중 입니다...");
         }
 
-        //목록 가져오는 api 호출
+        //api 호출
         Retrofit retrofit= NetworkClient.getRetrofitClient(getContext(), Config.PP_BASE_URL);
         ApiSecondFragment api=retrofit.create(ApiSecondFragment.class);
 
@@ -414,8 +414,12 @@ public class SecondFragment extends Fragment {
         } else if(pApiGbn==2) {
             call = api.parkingImgUpload(photoBody);
         } else if(pApiGbn==3) {
-            data.setStart_prk_at(Util.getNowDateTime());
-            call = api.parkingComplete("Bearer " + accessToken, data);
+            if(data.getPrk_id()==0) {
+                data.setStart_prk_at(Util.getNowDateTime());
+                call = api.parkingComplete("Bearer " + accessToken, data);
+            }else{
+                call = api.parkingUpdate("Bearer " + accessToken, data.getPrk_id(), data);
+            }
         }
 
         call.enqueue(new Callback<DataListRes>() {
@@ -441,19 +445,25 @@ public class SecondFragment extends Fragment {
                             displayParkingLot();
                         }else if(pApiGbn==3) {
 //                            Toast.makeText(getContext(), "저장 완료.", Toast.LENGTH_LONG).show();
-                            data.setPrk_id(dataListRes.getPrk_id());
+                            if(data.getPrk_id()==0) {
+                                data.setPrk_id(dataListRes.getPrk_id());
+                            }
                             writeSharedPreferences();
-
                             //알러트 다이얼로그(팝업)
                             AlertDialog.Builder alert=new AlertDialog.Builder(getContext());
-                            alert.setTitle("주차완료 저장 성공");
-                            alert.setMessage("홈화면으로 이동합니다.");
+                            if(data.getPrk_id()==0) {
+                                alert.setTitle("주차완료 저장 성공");
+                            }else{
+                                alert.setTitle("주차완료 수정 성공");
+                            }
+                            alert.setMessage("홈화면으로 이동하시겠습니까?");
                             alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     mainActivity.changeFragment(R.id.firstFragment, new FirstFragment());
                                 }
                             });
+                            alert.setNegativeButton("No", null);
                             //알러트 다이얼로그의 버튼을 안누르면, 화면이 넘어가지 않게..
                             alert.setCancelable(false);
                             //다이얼로그 화면에 보이기
