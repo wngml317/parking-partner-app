@@ -22,7 +22,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
 import com.yh.parkingpartner.R;
-import com.yh.parkingpartner.adapter.MypageAdapter;
 import com.yh.parkingpartner.api.ApiSecondFragment;
 import com.yh.parkingpartner.api.ApiThirdFragment;
 import com.yh.parkingpartner.api.NetworkClient;
