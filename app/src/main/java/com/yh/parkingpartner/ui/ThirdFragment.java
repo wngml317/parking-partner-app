@@ -178,7 +178,7 @@ public class ThirdFragment extends Fragment {
                     Lct_prk_area2.setText(dataListRes.get(0).getPrk_area());
                     Lct_prk_plce_adres2.setText(dataListRes.get(0).getPrk_plce_adres());
                     Lct_prk_plce_nm2.setText(dataListRes.get(0).getPrk_plce_nm());
-                    Lct_start_prk_at2.setText(dataListRes.get(0).getStart_prk_at());
+                    Lct_start_prk_at2.setText(dataListRes.get(0).getStart_prk_at().replace("T", " ").substring(0, 16));
                     Lct_prk_img.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
                     //클라이드 라이브러리 사용
