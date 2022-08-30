@@ -211,15 +211,21 @@ public class FirstFragment extends Fragment
         });
 
         imgListView.setOnClickListener(new View.OnClickListener(){
-
             @Override
             public void onClick(View view) {
                 // 목록보기 액티비티 호출
                 Intent intent=new Intent(getContext(), ParkListActivity.class);
-                startActivityForResult(intent, Util.AUTOCOMPLETE_REQUEST_CODE);
+                intent.putExtra("title;", mainActivity.getSupportActionBar().getTitle());
+                if(mainActivity.getSupportActionBar().getTitle().toString().equals("현 위치 주변")){
+                    intent.putExtra("latitude;", nowLatitude);
+                    intent.putExtra("longitude", nowLongitude);
+                } else {
+                    intent.putExtra("latitude;", orgLatitude);
+                    intent.putExtra("longitude", orgLongitude);
+                }
+                startActivityForResult(intent, Util.PARKLIST_ACTIVITY_REQUEST_CODE);
             }
         });
-
 
         imgDestinationSerarch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -318,6 +324,22 @@ public class FirstFragment extends Fragment
                 Log.i("로그", "경도 : "+place.getGeometry().getLocation().getLng());
 
                 getNetworkData(Util.MAP_DESTINATION_ARROUND, null, place);
+
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                Log.i("로그", "RESULT_CANCELED");
+            }
+            return;
+        } else if(requestCode == Util.PARKLIST_ACTIVITY_REQUEST_CODE){
+            Log.i("로그", "PARKLIST_ACTIVITY_REQUEST_CODE");
+            if (resultCode == Activity.RESULT_OK) {
+                Log.i("로그", "RESULT_OK");
+//                Data data1= data.getSerializableExtra("data");
+//                Log.i("로그", place.getName());
+//                Log.i("로그", place.getFormatted_address());
+//                Log.i("로그", "위도 : "+place.getGeometry().getLocation().getLat());
+//                Log.i("로그", "경도 : "+place.getGeometry().getLocation().getLng());
+
+//                getNetworkData(Util.MAP_ONE_PICK, null, place);
 
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Log.i("로그", "RESULT_CANCELED");
@@ -502,6 +524,7 @@ public class FirstFragment extends Fragment
             marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
         } else {
             dismissProgress();
+            return;
         }
 
         if(pApiGbn==Util.MAP_MY_ARROUND || pApiGbn==Util.MAP_DESTINATION_ARROUND){

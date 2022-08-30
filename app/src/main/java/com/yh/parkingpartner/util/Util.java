@@ -11,6 +11,7 @@ public class Util {
 
     public static final int AUTOCOMPLETE_REQUEST_CODE = 1;
     public static final int SEARCH_ACTIVITY_REQUEST_CODE = 2;
+    public static final int PARKLIST_ACTIVITY_REQUEST_CODE = 3;
 
     public static DecimalFormat myDecFormatter = new DecimalFormat("###,###");
     public static DecimalFormat myFloatFormatter = new DecimalFormat("###,###.##");
