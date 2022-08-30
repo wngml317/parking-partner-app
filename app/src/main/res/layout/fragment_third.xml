@@ -14,8 +14,8 @@
 
         <ImageView
             android:id="@+id/Lct_prk_img"
-            android:layout_width="376dp"
-            android:layout_height="303dp"
+            android:layout_width="357dp"
+            android:layout_height="302dp"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="20dp"
             android:src="@drawable/ic_baseline_photo_camera_back_24" />
@@ -41,21 +41,19 @@
 
                     <TextView
                         android:id="@+id/Lct_prk_plce_nm"
-                        android:layout_width="10dp"
+                        android:layout_width="88dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:layout_weight="1"
-                        android:gravity="center_horizontal"
-                        android:text="  주차장 명"
+                        android:text="주차장 명"
                         android:textColor="#000000"
-                        android:textSize="25sp" />
+                        android:textSize="17sp" />
 
                     <TextView
                         android:id="@+id/Lct_prk_plce_nm2"
                         android:layout_width="wrap_content"
                         android:layout_height="34dp"
                         android:layout_weight="1"
-                        android:gravity="center_horizontal"
                         android:text="인천 서구 주차장"
                         android:textSize="17sp" />
                 </LinearLayout>
@@ -68,21 +66,19 @@
 
                     <TextView
                         android:id="@+id/Lct_prk_plce_adres"
-                        android:layout_width="59dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:layout_weight="1"
-                        android:gravity="center_horizontal"
                         android:text="도로명 주소"
                         android:textColor="#000000"
-                        android:textSize="25sp" />
+                        android:textSize="17sp" />
 
                     <TextView
                         android:id="@+id/Lct_prk_plce_adres2"
                         android:layout_width="wrap_content"
                         android:layout_height="34dp"
                         android:layout_weight="1"
-                        android:gravity="center_horizontal"
                         android:text="업데이트 전입니다.."
                         android:textSize="17sp" />
 
@@ -96,22 +92,20 @@
 
                     <TextView
                         android:id="@+id/Lct_start_prk_at"
-                        android:layout_width="68dp"
+                        android:layout_width="90dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="4dp"
                         android:layout_weight="1"
-                        android:gravity="center_horizontal"
                         android:text="입차 시간"
                         android:textColor="#000000"
-                        android:textSize="25sp" />
+                        android:textSize="17sp" />
 
                     <TextView
                         android:id="@+id/Lct_start_prk_at2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:gravity="center_horizontal"
                         android:text="업데이트 전입니다..."
                         android:textSize="17sp" />
 
@@ -125,22 +119,20 @@
 
                     <TextView
                         android:id="@+id/Lct_prk_area"
-                        android:layout_width="71dp"
-                        android:layout_height="match_parent"
+                        android:layout_width="94dp"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="4dp"
                         android:layout_weight="1"
-                        android:gravity="center_horizontal"
                         android:text="주차 구역"
                         android:textColor="#000000"
-                        android:textSize="25sp" />
+                        android:textSize="17sp" />
 
                     <TextView
                         android:id="@+id/Lct_prk_area2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:gravity="center_horizontal"
                         android:text="업데이트 전입니다..."
                         android:textSize="17sp" />
                 </LinearLayout>
