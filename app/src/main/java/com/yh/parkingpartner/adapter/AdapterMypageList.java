@@ -1,6 +1,7 @@
 package com.yh.parkingpartner.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.yh.parkingpartner.R;
 import com.yh.parkingpartner.model.Review;
+import com.yh.parkingpartner.ui.MypageActivity;
+import com.yh.parkingpartner.ui.ReviewActivity;
 
 import java.util.List;
 
@@ -44,7 +47,13 @@ public class AdapterMypageList extends RecyclerView.Adapter<AdapterMypageList.Vi
         holder.txtPrkAdres.setText(review.getPrk_plce_adres());
         holder.txtStart.setText("입차시간 : " + review.getStart_prk_at().replace("T", " ").substring(0, 16));
         holder.txtEnd.setText("출차시간 : " + review.getEnd_prk().replace("T", " ").substring(0, 16));
-        holder.txtPrkArea.setText("구역 : " + review.getPrk_area());
+
+        if (review.getPrk_area() != null) {
+            holder.txtPrkArea.setText("구역 : " + review.getPrk_area());
+        } else {
+
+            holder.txtPrkArea.setText("구역 : 정보 없음");
+        }
         holder.txtPay.setText("요금 ( " + review.getParking_chrge_bs_time() + "분 / " + review.getParking_chrge_bs_chrg() + "원 )");
         time = review.getUse_prk_at().split(":");
         if (time[0].equals("0") ) {
@@ -100,12 +109,16 @@ public class AdapterMypageList extends RecyclerView.Adapter<AdapterMypageList.Vi
             btnReview = itemView.findViewById(R.id.btnReview);
             ratingBar = itemView.findViewById(R.id.ratingBar);
 
-            // todo -- 리뷰작성 / 수정 페이지 이동
             btnReview.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     int index = getAdapterPosition();
                     Review review = reviewList.get(index);
+
+                    Intent intent = new Intent(context, ReviewActivity.class);
+                    intent.putExtra("review", review);
+                    ((MypageActivity)context).finish();
+                    context.startActivity(intent);
 
                 }
             });

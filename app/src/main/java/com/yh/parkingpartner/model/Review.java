@@ -1,7 +1,10 @@
 package com.yh.parkingpartner.model;
 
-public class Review {
+import java.io.Serializable;
+
+public class Review implements Serializable {
     private int id;
+    private int prk_id;
     private String prk_plce_nm;
     private String prk_plce_adres;
     private String start_prk_at;
@@ -12,8 +15,20 @@ public class Review {
     private String prk_area;
     private String use_prk_at;
     private int end_pay;
-    private int rating;
+    private float rating;
     private String content;
+
+    public Review(int prkId, float rating, String content) {
+        this.prk_id = prkId;
+        this.rating = rating;
+        this.content = content;
+    }
+
+    public Review(float rating, String content) {
+        this.rating = rating;
+        this.content = content;
+    }
+
 
     public int getId() {
         return id;
@@ -21,6 +36,14 @@ public class Review {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getPrk_id() {
+        return prk_id;
+    }
+
+    public void setPrk_id(int prk_id) {
+        this.prk_id = prk_id;
     }
 
     public String getPrk_plce_nm() {
@@ -103,11 +126,11 @@ public class Review {
         this.end_pay = end_pay;
     }
 
-    public int getRating() {
+    public float getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(float rating) {
         this.rating = rating;
     }
 
