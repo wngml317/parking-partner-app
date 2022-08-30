@@ -120,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
                                 //알러트 다이얼로그(팝업)
                                 AlertDialog.Builder alert=new AlertDialog.Builder(LoginActivity.this);
                                 alert.setTitle("로그인 성공");
-                                alert.setMessage(registerRes.getName()+" 님 환영합니다.\n메인화면으로 이동합니다.");
+                                alert.setMessage(registerRes.getName()+" 님 환영합니다.\n홈화면으로 이동합니다.");
                                 alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {

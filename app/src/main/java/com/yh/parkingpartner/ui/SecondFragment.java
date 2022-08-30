@@ -3,6 +3,7 @@ package com.yh.parkingpartner.ui;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -386,6 +387,7 @@ public class SecondFragment extends Fragment {
                 Toast.makeText(getContext(), "현재 입차한 주차장정보를 수신하지 못했습니다.", Toast.LENGTH_SHORT).show();
                 return;
             }
+            showProgress("저장 중 입니다...");
         }
 
         //목록 가져오는 api 호출
@@ -438,9 +440,24 @@ public class SecondFragment extends Fragment {
                             data.setPrk_area(dataListRes.getDetectedText());
                             displayParkingLot();
                         }else if(pApiGbn==3) {
-                            Toast.makeText(getContext(), "저장 완료.", Toast.LENGTH_LONG).show();
+//                            Toast.makeText(getContext(), "저장 완료.", Toast.LENGTH_LONG).show();
                             data.setPrk_id(dataListRes.getPrk_id());
                             writeSharedPreferences();
+
+                            //알러트 다이얼로그(팝업)
+                            AlertDialog.Builder alert=new AlertDialog.Builder(getContext());
+                            alert.setTitle("주차완료 저장 성공");
+                            alert.setMessage("홈화면으로 이동합니다.");
+                            alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    mainActivity.changeFragment(R.id.firstFragment, new FirstFragment());
+                                }
+                            });
+                            //알러트 다이얼로그의 버튼을 안누르면, 화면이 넘어가지 않게..
+                            alert.setCancelable(false);
+                            //다이얼로그 화면에 보이기
+                            alert.show();
                         }
                     }
                 } else {

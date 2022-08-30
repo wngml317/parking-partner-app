@@ -194,7 +194,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 //알러트 다이얼로그(팝업)
                                 AlertDialog.Builder alert=new AlertDialog.Builder(RegisterActivity.this);
                                 alert.setTitle("회원가입 성공");
-                                alert.setMessage(name+" 님 환영합니다.\n메인화면으로 이동합니다.");
+                                alert.setMessage(name+" 님 환영합니다.\n홈화면으로 이동합니다.");
                                 alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
