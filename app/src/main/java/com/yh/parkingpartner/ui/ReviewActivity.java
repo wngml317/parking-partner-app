@@ -1,11 +1,15 @@
 package com.yh.parkingpartner.ui;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,11 +17,13 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.yh.parkingpartner.R;
+import com.yh.parkingpartner.api.ApiMypageActivity;
 import com.yh.parkingpartner.api.ApiReviewActivity;
 import com.yh.parkingpartner.api.NetworkClient;
 import com.yh.parkingpartner.config.Config;
 import com.yh.parkingpartner.model.PostRes;
 import com.yh.parkingpartner.model.Review;
+import com.yh.parkingpartner.model.UserRes;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,6 +50,11 @@ public class ReviewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review);
+
+        // 액션바 타이틀 설정
+        getSupportActionBar().setTitle("리뷰 저장");
+        // 액션바 뒤로가기 버튼
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         review = (Review) getIntent().getSerializableExtra("review");
 
@@ -140,5 +151,17 @@ public class ReviewActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+
+        if(itemId == android.R.id.home) {
+            Intent intent = new Intent(ReviewActivity.this, MypageActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
