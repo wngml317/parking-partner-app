@@ -127,7 +127,7 @@ public class FirstFragment extends Fragment
                 if(googleMap!=null && blnCreatedView==false){
                     blnCreatedView=true;
                     dismissProgress();
-                    getNetworkData(Util.MAP_MY_ARROUND, null, null);
+                    getNetworkData(Util.MAP_MY_ARROUND, null, null, null);
                 }
             }
         };
@@ -206,7 +206,7 @@ public class FirstFragment extends Fragment
             @Override
             public void onClick(View view) {
                 cardView.setVisibility(View.GONE);
-                getNetworkData(Util.MAP_MY_ARROUND, null, null);
+                getNetworkData(Util.MAP_MY_ARROUND, null, null, null);
             }
         });
 
@@ -302,7 +302,7 @@ public class FirstFragment extends Fragment
                         + ", "+ place.getLatLng().longitude
                 );
 
-                getNetworkData(Util.MAP_DESTINATION_ARROUND, place, null);
+                getNetworkData(Util.MAP_DESTINATION_ARROUND, place, null, null);
 
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
                 // TODO: Handle the error.
@@ -323,7 +323,7 @@ public class FirstFragment extends Fragment
                 Log.i("로그", "위도 : "+place.getGeometry().getLocation().getLat());
                 Log.i("로그", "경도 : "+place.getGeometry().getLocation().getLng());
 
-                getNetworkData(Util.MAP_DESTINATION_ARROUND, null, place);
+                getNetworkData(Util.MAP_DESTINATION_ARROUND, null, place, null);
 
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Log.i("로그", "RESULT_CANCELED");
@@ -333,13 +333,14 @@ public class FirstFragment extends Fragment
             Log.i("로그", "PARKLIST_ACTIVITY_REQUEST_CODE");
             if (resultCode == Activity.RESULT_OK) {
                 Log.i("로그", "RESULT_OK");
-//                Data data1= data.getSerializableExtra("data");
-//                Log.i("로그", place.getName());
-//                Log.i("로그", place.getFormatted_address());
-//                Log.i("로그", "위도 : "+place.getGeometry().getLocation().getLat());
-//                Log.i("로그", "경도 : "+place.getGeometry().getLocation().getLng());
+                Data rtnData= (Data) data.getSerializableExtra("parklist");
+                Log.i("로그", rtnData.getPrk_center_id());
+                Log.i("로그", rtnData.getPrk_plce_nm());
+                Log.i("로그", rtnData.getPrk_plce_adres());
+                Log.i("로그", "위도 : "+rtnData.getPrk_plce_entrc_la());
+                Log.i("로그", "경도 : "+rtnData.getPrk_plce_entrc_lo());
 
-//                getNetworkData(Util.MAP_ONE_PICK, null, place);
+                getNetworkData(Util.MAP_ONE_PICK, null, null, rtnData);
 
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Log.i("로그", "RESULT_CANCELED");
@@ -394,7 +395,8 @@ public class FirstFragment extends Fragment
 
     private void getNetworkData(int pApiGbn
             , @Nullable Place destination
-            , @Nullable com.yh.parkingpartner.model.Place pdestination) {
+            , @Nullable com.yh.parkingpartner.model.Place pdestination
+            , @Nullable Data parkingonepick) {
 
         cardView.setVisibility(View.GONE);
 
@@ -405,7 +407,6 @@ public class FirstFragment extends Fragment
                 return;
             }
         } else if(pApiGbn==Util.MAP_DESTINATION_ARROUND) {
-
             if(destination!=null) {
                 orgLatitude = destination.getLatLng().latitude;
                 orgLongitude = destination.getLatLng().longitude;
@@ -414,8 +415,10 @@ public class FirstFragment extends Fragment
                 orgLongitude = pdestination.getGeometry().getLocation().getLng();
             }
         } else {
-            orgLatitude = nowLatitude;
-            orgLongitude = nowLongitude;
+            setMarker(pApiGbn,
+                    parkingonepick.getPrk_plce_entrc_la(), parkingonepick.getPrk_plce_entrc_lo(),
+                    destination, pdestination, parkingonepick);
+            return;
         }
 
         //네트워크데이터를 보내고 있다는 프로그래스 다이얼로그를 먼저 띄운다..
@@ -443,7 +446,7 @@ public class FirstFragment extends Fragment
                     if (dataListRes.getResult().equals("success")) {
                         Toast.makeText(getContext(), dataListRes.getCount()+"개의 주차장 정보 수신 완료.", Toast.LENGTH_LONG).show();
                         dataList=(ArrayList<Data>) dataListRes.getItems();
-                        setMarker(pApiGbn, orgLatitude, orgLongitude, destination, pdestination);
+                        setMarker(pApiGbn, orgLatitude, orgLongitude, destination, pdestination, parkingonepick);
                     }
                 } else {
                     try{
@@ -478,7 +481,8 @@ public class FirstFragment extends Fragment
 
     void setMarker(int  pApiGbn, double pLatitude, double pLongitude
             , @Nullable Place destination
-            , @Nullable com.yh.parkingpartner.model.Place pdestination) {
+            , @Nullable com.yh.parkingpartner.model.Place pdestination
+            , @Nullable Data parkingonepick) {
 
         Marker marker=null;
         LatLng orgLoc=null;
@@ -515,13 +519,19 @@ public class FirstFragment extends Fragment
             marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
         } else if(pApiGbn==Util.MAP_ONE_PICK){
             googleMap.clear();
-            mainActivity.getSupportActionBar().setTitle("주차장명");
+//            mainActivity.getSupportActionBar().setTitle("주차장명");
             orgLoc=new LatLng(pLatitude, pLongitude);
             marker=googleMap.addMarker(new MarkerOptions().position(orgLoc));
 
-            marker.setTag(-1);
-            marker.setTitle("주차장명 기입");
+            marker.setTag(0);
+            marker.setTitle(parkingonepick.getPrk_plce_nm());
+            marker.setSnippet(parkingonepick.getPrk_plce_adres());
             marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+
+            dataList.clear();
+            dataList.add(parkingonepick);
+
+            onMarkerClick(marker);
         } else {
             dismissProgress();
             return;
