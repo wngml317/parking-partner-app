@@ -62,6 +62,7 @@ public class ThirdFragment extends Fragment {
     TextView Lct_prk_area;
     TextView Lct_prk_area2;
     String accessToken;
+    int prk_id;
     String img_prk;
     private ProgressDialog dialog;
     int count = 0;
@@ -133,17 +134,6 @@ public class ThirdFragment extends Fragment {
         Lct_prk_plce_nm2 = rootView.findViewById(R.id.Lct_prk_plce_nm2);
 
 
-        Lct_prk_area2.setText(data.getPrk_area());
-        Lct_prk_plce_adres2.setText(data.getPrk_plce_adres());
-        Lct_prk_plce_nm2.setText(data.getPrk_plce_nm());
-        Lct_start_prk_at2.setText(data.getStart_prk_at());
-        Lct_prk_img.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        if(data.getPrk_id()!=0) {
-            //클라이드 라이브러리 사용
-            Lct_prk_img.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            GlideUrl url=new GlideUrl(data.getImg_prk(), new LazyHeaders.Builder().addHeader("User-Agent", "Android").build());
-            Glide.with(getActivity()).load(url).into(Lct_prk_img);}
-
 
 
 
@@ -161,6 +151,7 @@ public class ThirdFragment extends Fragment {
         //SharedPref소erences 를 이용해서, 앱 내의 저장에 영구저장된 데이터를 읽어오는 방법
         SharedPreferences sp = getActivity().getSharedPreferences(Config.SP_NAME, getActivity().MODE_PRIVATE);
         accessToken = sp.getString(Config.SP_KEY_ACCESS_TOKEN, "");
+        prk_id = sp.getInt(Config.SP_KEY_PRK_ID,0);
         Log.i("로그", "accessToken : " + accessToken);
 
     }
@@ -178,11 +169,25 @@ public class ThirdFragment extends Fragment {
 
         Retrofit retrofit = NetworkClient.getRetrofitClient(getContext(), Config.PP_BASE_URL);
         ApiThirdFragment api = retrofit.create(ApiThirdFragment.class);
-        Call<DataListRes> call = api.getDataList("Bearer " + accessToken, data.getPrk_id());
+        Call<DataListRes> call = api.getDataList("Bearer " + accessToken, prk_id);
         call.enqueue(new Callback<DataListRes>() {
             @Override
             public void onResponse(Call<DataListRes> call, Response<DataListRes> response) {
                 if (response.isSuccessful()) {
+
+
+
+                    Lct_prk_area2.setText(data.getPrk_area());
+                    Lct_prk_plce_adres2.setText(data.getPrk_plce_adres());
+                    Lct_prk_plce_nm2.setText(data.getPrk_plce_nm());
+                    Lct_start_prk_at2.setText(data.getStart_prk_at());
+                    Lct_prk_img.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    if(data.getPrk_id()!=0) {
+                        //클라이드 라이브러리 사용
+                        Lct_prk_img.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                        GlideUrl url=new GlideUrl(data.getImg_prk(), new LazyHeaders.Builder().addHeader("User-Agent", "Android").build());
+                        Glide.with(getActivity()).load(url).into(Lct_prk_img);}
+
 
 
                     DataListRes data = response.body();
