@@ -107,14 +107,11 @@ public class ThirdFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
-
-            mainActivity = (MainActivity) getActivity();
-            mainActivity.getSupportActionBar().setTitle("주차 위치");
-            ReadSharedPreferences();
-
-
-
         }
+
+        mainActivity = (MainActivity) getActivity();
+        mainActivity.getSupportActionBar().setTitle("주차 위치");
+        ReadSharedPreferences();
     }
 
     @Override
@@ -153,6 +150,7 @@ public class ThirdFragment extends Fragment {
         accessToken = sp.getString(Config.SP_KEY_ACCESS_TOKEN, "");
         prk_id = sp.getInt(Config.SP_KEY_PRK_ID,0);
         Log.i("로그", "accessToken : " + accessToken);
+        Log.i("로그", "prk_id : " + prk_id);
 
     }
 
@@ -176,25 +174,25 @@ public class ThirdFragment extends Fragment {
                 if (response.isSuccessful()) {
 
 
-
-                    Lct_prk_area2.setText(data.getPrk_area());
-                    Lct_prk_plce_adres2.setText(data.getPrk_plce_adres());
-                    Lct_prk_plce_nm2.setText(data.getPrk_plce_nm());
-                    Lct_start_prk_at2.setText(data.getStart_prk_at());
+                    dataListRes = response.body().getItems();
+                    Lct_prk_area2.setText(dataListRes.get(0).getPrk_area());
+                    Lct_prk_plce_adres2.setText(dataListRes.get(0).getPrk_plce_adres());
+                    Lct_prk_plce_nm2.setText(dataListRes.get(0).getPrk_plce_nm());
+                    Lct_start_prk_at2.setText(dataListRes.get(0).getStart_prk_at());
                     Lct_prk_img.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                    if(data.getPrk_id()!=0) {
-                        //클라이드 라이브러리 사용
-                        Lct_prk_img.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                        GlideUrl url=new GlideUrl(data.getImg_prk(), new LazyHeaders.Builder().addHeader("User-Agent", "Android").build());
-                        Glide.with(getActivity()).load(url).into(Lct_prk_img);}
+
+                    //클라이드 라이브러리 사용
+                    Lct_prk_img.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    GlideUrl url=new GlideUrl(dataListRes.get(0).getImg_prk(), new LazyHeaders.Builder().addHeader("User-Agent", "Android").build());
+                    Glide.with(getActivity()).load(url).into(Lct_prk_img);}
 
 
 
-                    DataListRes data = response.body();
-                    count = data.getCount();
-                    dataListRes.addAll(data.getItems());
+//                    DataListRes data = response.body();
+//                    count = data.getCount();
+//                    dataListRes.addAll(data.getItems());
 
-                }
+
             }
 
             @Override
