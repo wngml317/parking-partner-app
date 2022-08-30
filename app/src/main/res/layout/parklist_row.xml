@@ -45,7 +45,7 @@
                         android:layout_weight="1"
                         android:paddingLeft="10dp"
                         android:text="TextView"
-                        android:textSize="22sp" />
+                        android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/txtCount"
@@ -54,7 +54,7 @@
                         android:layout_weight="1"
                         android:paddingLeft="10dp"
                         android:text="TextView"
-                        android:textSize="22sp" />
+                        android:textSize="20sp" />
                 </LinearLayout>
 
             </LinearLayout>

@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="3dp"
                 android:layout_weight="1"
-                android:text="주차 구획수" />
+                android:text="주차장 총 구획수" />
 
         </LinearLayout>
 

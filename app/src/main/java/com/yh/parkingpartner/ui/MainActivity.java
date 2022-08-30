@@ -123,5 +123,13 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
+    public boolean changeFragment(int itemId, Fragment fragment) {
+        if (fragment != null) {
+            navigationView.getMenu().findItem(itemId).setChecked(true);
+            getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,fragment).commit();
+            return true;
+        }
+        return false;
+    }
 
 }

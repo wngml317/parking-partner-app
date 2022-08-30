@@ -48,7 +48,7 @@ public class AdapterParkList extends RecyclerView.Adapter<AdapterParkList.ViewHo
 
         holder.txtTitle.setText(data.getPrk_plce_nm());
         holder.txtCharge.setText(data.getParking_chrge_bs_time()+"분당" + data.getParking_chrge_bs_chrg()+"원");
-        holder.txtCount.setText(data.getPkfc_Available_ParkingLots_total()+"대 주차가능");
+        holder.txtCount.setText("총 구획수 : " + data.getPrk_cmprt_co());
 
 
     }
