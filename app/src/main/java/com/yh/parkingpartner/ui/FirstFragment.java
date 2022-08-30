@@ -215,12 +215,12 @@ public class FirstFragment extends Fragment
             public void onClick(View view) {
                 // 목록보기 액티비티 호출
                 Intent intent=new Intent(getContext(), ParkListActivity.class);
-                intent.putExtra("title;", mainActivity.getSupportActionBar().getTitle());
+                intent.putExtra("title", mainActivity.getSupportActionBar().getTitle());
                 if(mainActivity.getSupportActionBar().getTitle().toString().equals("현 위치 주변")){
-                    intent.putExtra("latitude;", nowLatitude);
+                    intent.putExtra("latitude", nowLatitude);
                     intent.putExtra("longitude", nowLongitude);
                 } else {
-                    intent.putExtra("latitude;", orgLatitude);
+                    intent.putExtra("latitude", orgLatitude);
                     intent.putExtra("longitude", orgLongitude);
                 }
                 startActivityForResult(intent, Util.PARKLIST_ACTIVITY_REQUEST_CODE);
