@@ -1,15 +1,16 @@
 package com.yh.parkingpartner.ui;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -21,13 +22,14 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
 import com.yh.parkingpartner.R;
-import com.yh.parkingpartner.adapter.MypageAdapter;
+import com.yh.parkingpartner.adapter.AdapterMypageList;
 import com.yh.parkingpartner.api.ApiMypageActivity;
 import com.yh.parkingpartner.api.NetworkClient;
 import com.yh.parkingpartner.config.Config;
 import com.yh.parkingpartner.model.MypageRes;
 import com.yh.parkingpartner.model.Review;
 import com.yh.parkingpartner.model.ReviewListRes;
+import com.yh.parkingpartner.model.UserRes;
 
 import java.util.ArrayList;
 
@@ -41,7 +43,7 @@ public class MypageActivity extends AppCompatActivity {
     String accessToken;
     RecyclerView recyclerView;
     ProgressBar progressBar;
-    MypageAdapter adapter;
+    AdapterMypageList adapter;
     ArrayList<Review> reviewList = new ArrayList<>();
 
     TextView txtEmail;
@@ -204,7 +206,7 @@ public class MypageActivity extends AppCompatActivity {
                     offset = offset + count;
 
                     progressBar.setVisibility(View.INVISIBLE);
-                    adapter = new MypageAdapter(MypageActivity.this, reviewList);
+                    adapter = new AdapterMypageList(MypageActivity.this, reviewList);
                     recyclerView.setAdapter(adapter);
 
                     txtResult.setText("");
@@ -258,14 +260,64 @@ public class MypageActivity extends AppCompatActivity {
         });
     }
 
+    // 상단바 로그아웃 메뉴
+    @Override
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        getMenuInflater().inflate(R.menu.mypage_menu, menu);
+        return true;
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
 
         if(itemId == android.R.id.home) {
             finish();
+        } else if (itemId == R.id.menuLogout) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(MypageActivity.this);
+            alert.setTitle("로그아웃");
+            alert.setMessage("로그아웃 하시겠습니까?");
+            alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+//                    SharedPreferences sp = getApplication().getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+//                    accessToken = sp.getString("accessToken", "");
+
+                    Retrofit retrofit = NetworkClient.getRetrofitClient(MypageActivity.this, Config.PP_BASE_URL);
+                    ApiMypageActivity api = retrofit.create(ApiMypageActivity.class);
+
+                    Call<UserRes> call = api.logout("Bearer " + accessToken);
+
+                    call.enqueue(new Callback<UserRes>() {
+                        @Override
+                        public void onResponse(Call<UserRes> call, Response<UserRes> response) {
+                            if (response.isSuccessful()) {
+                                SharedPreferences sp = getApplication().getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sp.edit();
+                                editor.putString("accessToken", "");
+                                editor.apply();
+
+                                Intent intent = new Intent(MypageActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<UserRes> call, Throwable t) {
+
+                        }
+                    });
+                }
+
+            });
+            alert.setNegativeButton("No", null);
+            alert.show();
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
+
 }
