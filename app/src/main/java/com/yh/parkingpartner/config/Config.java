@@ -27,6 +27,8 @@ public class Config {
     public static final String SP_KEY_PRK_CENTER_ID="prk_center_id";
     //prk_plce_nm-주차장명
     public static final String SP_KEY_PRK_PLCE_NM="prk_plce_nm";
+    //prk_plce_adres-주차장주소
+    public static final String SP_KEY_PRK_PLCE_ADRES="prk_plce_adres";
     // start_prk_at-입차시간
     public static final String SP_KEY_START_PRK_AT="start_prk_at";
     // Img_prk-주차사진URL

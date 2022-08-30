@@ -1,6 +1,9 @@
 package com.yh.parkingpartner.api;
 
+import com.yh.parkingpartner.model.Data;
 import com.yh.parkingpartner.model.DataListRes;
+import com.yh.parkingpartner.model.PostRes;
+import com.yh.parkingpartner.model.User;
 import com.yh.parkingpartner.model.UserRes;
 
 import java.util.Map;
@@ -8,7 +11,9 @@ import java.util.Map;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -36,6 +41,13 @@ public interface ApiSecondFragment {
     @POST("/upload")
     Call<DataListRes> parkingImgUpload(
             @Part MultipartBody.Part img_profile
+    );
+
+    // 주차완료저장 : /parkingComplete
+    @POST("/parkingComplete")
+    Call<DataListRes> parkingComplete(
+            @Header("Authorization") String token,
+            @Body Data data
     );
 
 }
