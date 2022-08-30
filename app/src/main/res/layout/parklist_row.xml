@@ -33,6 +33,15 @@
                     android:text="TextView"
                     android:textSize="22sp" />
 
+                <TextView
+                    android:id="@+id/txtDistance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingLeft="10dp"
+                    android:text="TextView"
+                    android:textSize="18sp" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -45,7 +54,7 @@
                         android:layout_weight="1"
                         android:paddingLeft="10dp"
                         android:text="TextView"
-                        android:textSize="20sp" />
+                        android:textSize="18sp" />
 
                     <TextView
                         android:id="@+id/txtCount"
@@ -54,7 +63,7 @@
                         android:layout_weight="1"
                         android:paddingLeft="10dp"
                         android:text="TextView"
-                        android:textSize="20sp" />
+                        android:textSize="18sp" />
                 </LinearLayout>
 
             </LinearLayout>

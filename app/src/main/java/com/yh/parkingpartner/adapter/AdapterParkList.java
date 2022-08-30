@@ -19,6 +19,8 @@ import com.yh.parkingpartner.ui.MainActivity;
 import com.yh.parkingpartner.ui.ParkListActivity;
 import com.yh.parkingpartner.ui.SearchActivity;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 public class AdapterParkList extends RecyclerView.Adapter<AdapterParkList.ViewHolder>{
@@ -47,6 +49,7 @@ public class AdapterParkList extends RecyclerView.Adapter<AdapterParkList.ViewHo
         Data data = parkList.get(position);
 
         holder.txtTitle.setText(data.getPrk_plce_nm());
+        holder.txtDistance.setText((int) data.getDistance()+"m" );
         holder.txtCharge.setText(data.getParking_chrge_bs_time()+"분당" + data.getParking_chrge_bs_chrg()+"원");
         holder.txtCount.setText("총 구획수 : " + data.getPrk_cmprt_co());
 
@@ -62,6 +65,7 @@ public class AdapterParkList extends RecyclerView.Adapter<AdapterParkList.ViewHo
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView txtTitle;
+        TextView txtDistance;
         TextView txtCharge;
         TextView txtCount;
 
@@ -71,6 +75,7 @@ public class AdapterParkList extends RecyclerView.Adapter<AdapterParkList.ViewHo
             super(itemView);
 
             txtTitle = itemView.findViewById(R.id.txtTitle);
+            txtDistance = itemView.findViewById(R.id.txtDistance);
             txtCharge = itemView.findViewById(R.id.txtCharge);
             txtCount = itemView.findViewById(R.id.txtCount);
             cardView = itemView.findViewById(R.id.cardView);
