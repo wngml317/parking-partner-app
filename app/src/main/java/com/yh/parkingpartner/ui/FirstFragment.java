@@ -527,6 +527,7 @@ public class FirstFragment extends Fragment
             marker.setTitle(parkingonepick.getPrk_plce_nm());
             marker.setSnippet(parkingonepick.getPrk_plce_adres());
             marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+            marker.showInfoWindow();
 
             dataList.clear();
             dataList.add(parkingonepick);
