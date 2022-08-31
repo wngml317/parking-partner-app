@@ -53,8 +53,12 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        
-        <activity android:name=".ui.ParkListActivity"/>
+
+        <receiver android:name=".util.NotificationUtil"
+            android:exported="false"/>
+
+        <activity android:name=".ui.ParkListActivity"
+            android:exported="false" />
 
         <activity
             android:name=".ui.RegisterActivity"
@@ -64,10 +68,10 @@
             android:exported="false" />
         <activity
             android:name=".ui.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

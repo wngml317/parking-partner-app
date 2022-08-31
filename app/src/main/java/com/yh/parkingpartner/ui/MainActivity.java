@@ -22,6 +22,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.yh.parkingpartner.R;
 import com.yh.parkingpartner.config.Config;
+import com.yh.parkingpartner.util.AlarmUtil;
+import com.yh.parkingpartner.util.Util;
+
+import java.util.Calendar;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,9 +44,26 @@ public class MainActivity extends AppCompatActivity {
     private Fragment fourthFragment;
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if(intent != null) {
+            Log.i("로그", "onNewIntent intent");
+            boolean blnNotification = intent.getBooleanExtra("notification", false);
+            if (blnNotification) {
+                changeFragment(R.id.fourthFragment, new FourthFragment());
+            }
+        }else{
+            Log.i("로그", "onNewIntent intent=null");
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Util.setTimeZone("Asia/Seoul", Locale.KOREA);
+        AlarmUtil.setAlarm(this, Util.NOTIFICATION_REQUEST_CODE);
 
         navigationView = findViewById(R.id.bottonNavigationView);
 
@@ -70,7 +92,12 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         } else {
-            transaction.replace(R.id.frameLayout, firstFragment).commitAllowingStateLoss();
+            boolean blnNotification=getIntent().getBooleanExtra("notification", false);
+            if(blnNotification){
+                changeFragment(R.id.fourthFragment, new FourthFragment());
+            } else {
+                transaction.replace(R.id.frameLayout, firstFragment).commitAllowingStateLoss();
+            }
         }
 
         navigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
