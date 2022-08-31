@@ -1,38 +1,35 @@
 package com.yh.parkingpartner.ui;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
 import com.yh.parkingpartner.R;
-import com.yh.parkingpartner.api.ApiSecondFragment;
 import com.yh.parkingpartner.api.ApiThirdFragment;
 import com.yh.parkingpartner.api.NetworkClient;
 import com.yh.parkingpartner.config.Config;
 import com.yh.parkingpartner.model.Data;
 import com.yh.parkingpartner.model.DataListRes;
-import com.yh.parkingpartner.model.Review;
-import com.yh.parkingpartner.model.ReviewListRes;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -47,6 +44,7 @@ import retrofit2.Retrofit;
 public class ThirdFragment extends Fragment {
 
 
+    Fragment secondFragment;
     MainActivity mainActivity;
     ProgressDialog progressDialog;
     boolean blnCreatedView;
@@ -120,6 +118,7 @@ public class ThirdFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_third, container, false);
 
 
+        secondFragment = new SecondFragment();
         Lct_prk_img = rootView.findViewById(R.id.Lct_prk_img);
         Lct_prk_area = rootView.findViewById(R.id.Lct_prk_area);
         Lct_prk_area2 = rootView.findViewById(R.id.Lct_prk_area2);
@@ -129,15 +128,6 @@ public class ThirdFragment extends Fragment {
         Lct_prk_plce_adres2 = rootView.findViewById(R.id.Lct_prk_plce_adres2);
         Lct_prk_plce_nm = rootView.findViewById(R.id.Lct_prk_plce_nm);
         Lct_prk_plce_nm2 = rootView.findViewById(R.id.Lct_prk_plce_nm2);
-
-
-
-
-
-
-
-
-
 
 
         // Inflate the layout for this fragment
@@ -154,6 +144,7 @@ public class ThirdFragment extends Fragment {
 
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
@@ -162,6 +153,24 @@ public class ThirdFragment extends Fragment {
 
 
     private void getNetworkData() {
+
+        // 저장된 prk_id(SP_KEY_PRK_ID) 가 없을 경우
+        if (prk_id == 0) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+            alert.setTitle("주차 위치 정보 없음");
+            alert.setMessage("주차 완료 후, 사용해주세요.");
+            alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                    mainActivity.changeFragment(R.id.secondFragment, secondFragment);
+                }
+
+            });
+            alert.show();
+            return;
+        }
+
         dataListRes.clear();
         count = 1;
 
