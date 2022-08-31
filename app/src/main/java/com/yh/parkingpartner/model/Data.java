@@ -24,12 +24,24 @@ public class Data implements Serializable {
     String img_prk;                      //주차사진URL
     String prk_area;                     //주차구역
     String end_prk;                      //주차출차시간
-    int use_prk_at;                      //주차시간(분)
+    String use_prk_at;                      //주차시간(분)
     int end_pay;                             //주차요금
 
     int charge;
     double distance;
     int available;
+
+    public String getUse_prk_at() {
+        return use_prk_at;
+    }
+
+    public void setUse_prk_at(String use_prk_at) {
+        this.use_prk_at = use_prk_at;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
 
     public int getCharge() {
         return charge;
@@ -93,14 +105,6 @@ public class Data implements Serializable {
 
     public void setEnd_prk(String end_prk) {
         this.end_prk = end_prk;
-    }
-
-    public int getUse_prk_at() {
-        return use_prk_at;
-    }
-
-    public void setUse_prk_at(int use_prk_at) {
-        this.use_prk_at = use_prk_at;
     }
 
     public int getEnd_pay() {
