@@ -141,7 +141,7 @@
                         android:background="@drawable/btn_disable_shape"
                         android:text="리뷰 작성"
                         android:textColor="@color/white"
-                        android:textSize="14sp" />
+                        android:textSize="16sp" />
 
                     <RatingBar
                         android:id="@+id/ratingBar"

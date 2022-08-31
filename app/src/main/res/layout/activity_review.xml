@@ -54,6 +54,7 @@
                 android:layout_gravity="center"
                 android:layout_margin="30dp"
                 android:numStars="5"
+                android:rating="1"
                 android:progressTint="#FFEB3B"
                 android:secondaryProgressTint="#FFEB3B"
                 android:stepSize="1" />

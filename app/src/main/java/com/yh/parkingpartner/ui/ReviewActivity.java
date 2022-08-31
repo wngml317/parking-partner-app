@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.yh.parkingpartner.R;
 import com.yh.parkingpartner.api.ApiMypageActivity;
@@ -75,8 +76,8 @@ public class ReviewActivity extends AppCompatActivity {
         ratingBar.setRating(review.getRating());
         txtContent.setText(review.getContent());
 
-        // 작성한 리뷰가 없을 경우 , 작성 / 작성한 리뷰가 있을 경우, 수정
-        if (review.getRating() == 0) {
+        // 작성한 리뷰가 없을 경우 (별점이 0이고, 리뷰 id가 없는 경우) -> 작성 / 작성한 리뷰가 있을 경우 -> 수정
+        if (review.getRating() == 0 && review.getId() == 0) {
             btnSave.setText("리뷰 작성");
 
             btnSave.setOnClickListener(new View.OnClickListener() {
@@ -86,6 +87,12 @@ public class ReviewActivity extends AppCompatActivity {
                     ApiReviewActivity api = retrofit.create(ApiReviewActivity.class);
 
                     rating = ratingBar.getRating();
+
+                    if (rating == 0) {
+                        Toast.makeText(ReviewActivity.this, "별점은 최소 1점 이상 입력해주세요.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
                     if (!txtContent.getText().toString().isEmpty()) {
                         content = txtContent.getText().toString();
                     }
@@ -123,6 +130,12 @@ public class ReviewActivity extends AppCompatActivity {
                     ApiReviewActivity api = retrofit.create(ApiReviewActivity.class);
 
                     rating = ratingBar.getRating();
+
+                    if (rating == 0) {
+                        Toast.makeText(ReviewActivity.this, "별점은 최소 1점 이상 입력해주세요.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
                     if (!txtContent.getText().toString().isEmpty()) {
                         content = txtContent.getText().toString();
                     }
