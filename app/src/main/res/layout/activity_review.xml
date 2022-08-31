@@ -21,10 +21,9 @@
             android:layout_marginStart="30dp"
             android:layout_marginTop="100dp"
             android:layout_marginEnd="30dp"
-            android:background="@color/white"
-            android:elevation="5dp"
+            android:background="@drawable/review_back_shape"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="20dp">
 
             <TextView
                 android:id="@+id/txtPrkNm"
@@ -33,8 +32,9 @@
                 android:layout_margin="5dp"
                 android:layout_marginTop="5dp"
                 android:text="TextView"
-                android:textStyle="bold"
-                android:textSize="24sp" />
+                android:textColor="#000000"
+                android:textSize="26sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/txtEnd"
@@ -43,6 +43,7 @@
                 android:layout_margin="5dp"
                 android:layout_marginTop="5dp"
                 android:text="TextView"
+                android:textColor="#000000"
                 android:textSize="18sp" />
 
             <RatingBar
@@ -75,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/linearLayout"
             android:layout_marginStart="30dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="50dp"
             android:layout_marginEnd="30dp"
             android:layout_marginBottom="30dp"
             android:background="@drawable/btn_disable_shape"
