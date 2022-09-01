@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -29,6 +30,8 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static Activity activity;
 
     BottomNavigationView navigationView;
     String accessToken;
@@ -61,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // 로그아웃 시, MainActivity 종료할 때 필요
+        activity = MainActivity.this;
 
         Util.setTimeZone("Asia/Seoul", Locale.KOREA);
         AlarmUtil.setAlarm(this, Util.NOTIFICATION_REQUEST_CODE);
