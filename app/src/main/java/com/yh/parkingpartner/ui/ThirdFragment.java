@@ -181,6 +181,7 @@ public class ThirdFragment extends Fragment {
             @Override
             public void onResponse(Call<DataListRes> call, Response<DataListRes> response) {
                 if (response.isSuccessful()) {
+                    Log.i("로그", "결과 : "+response.isSuccessful());
 
 
                     dataListRes = response.body().getItems();

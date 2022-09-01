@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -14,12 +15,16 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
+import com.google.android.gms.common.api.Api;
 import com.yh.parkingpartner.R;
+import com.yh.parkingpartner.adapter.AdapterMypageList;
 import com.yh.parkingpartner.api.ApiFourthFragment;
+import com.yh.parkingpartner.api.ApiMypageActivity;
 import com.yh.parkingpartner.api.NetworkClient;
 import com.yh.parkingpartner.config.Config;
 import com.yh.parkingpartner.model.Data;
 import com.yh.parkingpartner.model.DataListRes;
+import com.yh.parkingpartner.model.ReviewListRes;
 
 import java.util.ArrayList;
 
@@ -50,11 +55,8 @@ public class FourthFragment extends Fragment {
     TextView prkPay2;
     Button btnCheckPay;
     Button btnEndParking;
-    int count = 0;
     int prk_id;
-
-
-
+    int count = 0;
 
 
 
@@ -81,8 +83,8 @@ public class FourthFragment extends Fragment {
      * @return A new instance of fragment SecondFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static FourthFragment newInstance(String param1, String param2) {
-        FourthFragment fragment = new FourthFragment();
+    public static SecondFragment newInstance(String param1, String param2) {
+        SecondFragment fragment = new SecondFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -107,25 +109,62 @@ public class FourthFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_fourth, container, false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_fourth,container,false);
 
 
-        prkNm = rootView.findViewById(R.id.prkNm);
-        prkStart = rootView.findViewById(R.id.prkStart);
-        prkLct = rootView.findViewById(R.id.prkLct);
-        prkLct2 = rootView.findViewById(R.id.prkLct2);
-        prkTime = rootView.findViewById(R.id.prkTime);
-        prkTime2 = rootView.findViewById(R.id.prkTime2);
-        prkPay = rootView.findViewById(R.id.prkPay);
-        prkPay2 = rootView.findViewById(R.id.prkPay2);
+        prkNm = (TextView) rootView.findViewById(R.id.prkNm);
+        prkStart = (TextView) rootView.findViewById(R.id.prkStart);
+        prkLct = (TextView) rootView.findViewById(R.id.prkLct);
+        prkLct2 = (TextView) rootView.findViewById(R.id.prkLct2);
+        prkTime = (TextView) rootView.findViewById(R.id.prkTime);
+        prkTime2 = (TextView) rootView.findViewById(R.id.prkTime2);
+        prkPay = (TextView) rootView.findViewById(R.id.prkPay);
+        prkPay2 = (TextView) rootView.findViewById(R.id.prkPay2);
         btnCheckPay = (Button) rootView.findViewById(R.id.btnCheckPay);
-        btnEndParking = rootView.findViewById(R.id.btnEndParking);
-
+        btnEndParking = (Button) rootView.findViewById(R.id.btnEndParking);
         // Inflate the layout for this fragment
+
+
+        Retrofit retrofit = NetworkClient.getRetrofitClient(getActivity(),Config.PP_BASE_URL);
+        ApiFourthFragment api = retrofit.create(ApiFourthFragment.class);
+        Call<DataListRes> call = api.getPay(prk_id);
+        call.enqueue(new Callback<DataListRes>() {
+            @Override
+            public void onResponse(Call<DataListRes> call, Response<DataListRes> response) {
+                Log.i("로그", "결과 : "+response.isSuccessful());
+                if(response.isSuccessful()){
+                    dataList = response.body().getItems();
+                    prkNm.setText(dataList.get(0).getPrk_plce_nm());
+                    prkStart.setText(dataList.get(0).getStart_prk_at());
+                    prkLct2.setText(dataList.get(0).getPrk_area());
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DataListRes> call, Throwable t) {
+                t.printStackTrace();
+                Log.i("로그", "결과 : 실패");
+
+            }
+        });
+
+        btnCheckPay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                btnCheckPay.setEnabled(false);
+                btnEndParking.setEnabled(true);
+                getNetworkData();
+            }
+        });
+
+
+
+
         return rootView;
         }
-
-
 
 
         void ReadSharedPreferences(){
@@ -136,29 +175,28 @@ public class FourthFragment extends Fragment {
 
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
         getNetworkData();
     }
 
-
-
+    // 데이터를 처음 가져올때만 실행하는 함수
+    // 데이터의 초기화도 필요하다.
     private void getNetworkData() {
         dataList.clear();
         count = 1;
-
-        Retrofit retrofit = NetworkClient.getRetrofitClient(getContext(), Config.PP_BASE_URL);
+        Retrofit retrofit = NetworkClient.getRetrofitClient(getActivity(),Config.PP_BASE_URL);
         ApiFourthFragment api = retrofit.create(ApiFourthFragment.class);
         Call<DataListRes> call = api.getPay(prk_id);
         call.enqueue(new Callback<DataListRes>() {
             @Override
             public void onResponse(Call<DataListRes> call, Response<DataListRes> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     dataList = response.body().getItems();
-                    Log.i("로그", "dataList : " + response.body().getItems());
-                    prkNm.setText(dataList.get(0).getPrk_plce_nm());
-
+                    prkTime2.setText(dataList.get(0).getUse_prk_at());
+                    prkPay2.setText(String.valueOf(dataList.get(0).getEnd_pay()));
 
 
                 }
@@ -169,6 +207,8 @@ public class FourthFragment extends Fragment {
 
             }
         });
-
     }
+
+
+
 }
