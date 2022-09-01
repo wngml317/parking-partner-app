@@ -48,6 +48,7 @@ import com.yh.parkingpartner.api.NetworkClient;
 import com.yh.parkingpartner.config.Config;
 import com.yh.parkingpartner.model.Data;
 import com.yh.parkingpartner.model.DataListRes;
+import com.yh.parkingpartner.util.SkTmapApp;
 import com.yh.parkingpartner.util.Util;
 
 import org.json.JSONException;
@@ -90,7 +91,6 @@ public class FirstFragment extends Fragment
     ImageView imgListView;
     ImageView imgDestinationSerarch;
 
-
     LinearLayout cardView;
     Button btnTmap;
     ImageView imgClose;
@@ -107,6 +107,10 @@ public class FirstFragment extends Fragment
     TextView parking_chrge_one_day_chrge;
     RatingBar avg_rating;
 
+    SkTmapApp skTmapApp;
+
+    int markerSelectedIndex;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +118,7 @@ public class FirstFragment extends Fragment
         mainActivity = (MainActivity) getActivity();
         mainActivity.getSupportActionBar().setTitle("");
         blnCreatedView=false;
+        skTmapApp=new SkTmapApp(getContext());
 
         locationManager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
         //gps 로케이션 위치 받아오는 리스너
@@ -270,9 +275,16 @@ public class FirstFragment extends Fragment
                 alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        // TODO: Tmap 연동 코딩...
-//                        Intent intent=new Intent();
-//                        startActivity(intent);
+                        if(skTmapApp.isAuthentication()){
+                            if(skTmapApp.checkTmapApplicationInstalled()){
+                                //skTmapApp.searchProtal(prk_plce_nm.getText().toString());
+                                skTmapApp.searchRoute(nowLatitude, nowLongitude, dataList.get(markerSelectedIndex));
+                            }else{
+                                skTmapApp.tmapInstall();
+                            }
+                        }else{
+                            Toast.makeText(getContext(), "TMap 인증되지 않았습니다.", Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
                 alert.setNegativeButton("No", null);
@@ -387,8 +399,10 @@ public class FirstFragment extends Fragment
             avg_rating.setRating(dataList.get(index).getRating());
 
             cardView.setVisibility(View.VISIBLE);
+            markerSelectedIndex=index;
         } else {
             cardView.setVisibility(View.GONE);
+            markerSelectedIndex=-1;
         }
         return false;
     }
