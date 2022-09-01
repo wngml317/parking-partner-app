@@ -3,6 +3,7 @@ package com.yh.parkingpartner.ui;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -41,6 +42,7 @@ import retrofit2.Retrofit;
 public class MypageActivity extends AppCompatActivity {
 
     String accessToken;
+    int prkId;
     RecyclerView recyclerView;
     ProgressBar progressBar;
     AdapterMypageList adapter;
@@ -280,8 +282,8 @@ public class MypageActivity extends AppCompatActivity {
             alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-//                    SharedPreferences sp = getApplication().getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
-//                    accessToken = sp.getString("accessToken", "");
+                    SharedPreferences sp = getApplication().getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+                    prkId = sp.getInt(Config.SP_KEY_PRK_ID, 0);
 
                     Retrofit retrofit = NetworkClient.getRetrofitClient(MypageActivity.this, Config.PP_BASE_URL);
                     ApiMypageActivity api = retrofit.create(ApiMypageActivity.class);
@@ -295,8 +297,14 @@ public class MypageActivity extends AppCompatActivity {
                                 SharedPreferences sp = getApplication().getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sp.edit();
                                 editor.putString("accessToken", "");
+                                editor.putInt("prk_id", 0);
                                 editor.apply();
 
+                                // 로그아웃 시, 메인 액티비티 종료
+                                MainActivity mainActivity = (MainActivity) MainActivity.activity;
+                                mainActivity.finish();
+
+                                // 로그아웃 시, 현재 액티비티 종료 후, 로그인 페이지로 이동
                                 Intent intent = new Intent(MypageActivity.this, LoginActivity.class);
                                 startActivity(intent);
                                 finish();
