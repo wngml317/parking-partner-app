@@ -150,8 +150,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="30dp"
                         android:numStars="5"
-                        android:progressTint="#FFEB3B"
-                        android:secondaryProgressTint="#FFEB3B"
+                        android:progressTint="#FFC107"
+                        android:secondaryProgressTint="#FFC107"
                         android:stepSize="1" />
                 </LinearLayout>
             </LinearLayout>
