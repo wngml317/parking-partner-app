@@ -1,5 +1,6 @@
 package com.yh.parkingpartner.ui;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,8 +10,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.GlideUrl;
@@ -24,6 +28,7 @@ import com.yh.parkingpartner.api.NetworkClient;
 import com.yh.parkingpartner.config.Config;
 import com.yh.parkingpartner.model.Data;
 import com.yh.parkingpartner.model.DataListRes;
+import com.yh.parkingpartner.model.Review;
 import com.yh.parkingpartner.model.ReviewListRes;
 
 import java.util.ArrayList;
@@ -42,9 +47,11 @@ public class FourthFragment extends Fragment {
 
 
     MainActivity mainActivity;
+    Fragment fourthFragment;
 
     ArrayList<Data> dataList = new ArrayList<>();
-
+    Data data=new Data();
+    Fragment secondFragment;
     TextView prkNm;
     TextView prkStart;
     TextView prkLct;
@@ -55,8 +62,10 @@ public class FourthFragment extends Fragment {
     TextView prkPay2;
     Button btnCheckPay;
     Button btnEndParking;
-    int prk_id;
+    int prkId;
     int count = 0;
+    DataListRes dataListRes;
+    String[] time;
 
 
 
@@ -112,6 +121,7 @@ public class FourthFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_fourth,container,false);
 
 
+        secondFragment = new SecondFragment();
         prkNm = (TextView) rootView.findViewById(R.id.prkNm);
         prkStart = (TextView) rootView.findViewById(R.id.prkStart);
         prkLct = (TextView) rootView.findViewById(R.id.prkLct);
@@ -125,17 +135,17 @@ public class FourthFragment extends Fragment {
         // Inflate the layout for this fragment
 
 
-        Retrofit retrofit = NetworkClient.getRetrofitClient(getActivity(),Config.PP_BASE_URL);
+        Retrofit retrofit = NetworkClient.getRetrofitClient(getContext(),Config.PP_BASE_URL);
         ApiFourthFragment api = retrofit.create(ApiFourthFragment.class);
-        Call<DataListRes> call = api.getPay(prk_id);
+        Call<DataListRes> call = api.getPay(prkId);
         call.enqueue(new Callback<DataListRes>() {
             @Override
             public void onResponse(Call<DataListRes> call, Response<DataListRes> response) {
                 Log.i("로그", "결과 : "+response.isSuccessful());
                 if(response.isSuccessful()){
                     dataList = response.body().getItems();
-                    prkNm.setText(dataList.get(0).getPrk_plce_nm());
-                    prkStart.setText(dataList.get(0).getStart_prk_at());
+                    prkNm.setText(String.valueOf(dataList.get(0).getPrk_plce_nm()));
+                    prkStart.setText(dataList.get(0).getStart_prk_at().replace("T"," ").substring(0,16));
                     prkLct2.setText(dataList.get(0).getPrk_area());
 
                 }
@@ -144,7 +154,6 @@ public class FourthFragment extends Fragment {
             @Override
             public void onFailure(Call<DataListRes> call, Throwable t) {
                 t.printStackTrace();
-                Log.i("로그", "결과 : 실패");
 
             }
         });
@@ -154,9 +163,21 @@ public class FourthFragment extends Fragment {
             public void onClick(View view) {
 
 
+                btnCheckPay.setEnabled(true);
+                btnEndParking.setEnabled(false);
+                getNetworkData();
+            }
+        });
+
+
+        btnEndParking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
                 btnCheckPay.setEnabled(false);
                 btnEndParking.setEnabled(true);
-                getNetworkData();
+                getNetworkData2();
             }
         });
 
@@ -170,8 +191,8 @@ public class FourthFragment extends Fragment {
         void ReadSharedPreferences(){
         //SharedPref소erences 를 이용해서, 앱 내의 저장에 영구저장된 데이터를 읽어오는 방법
         SharedPreferences sp = getActivity().getSharedPreferences(Config.SP_NAME, getActivity().MODE_PRIVATE);
-        prk_id = sp.getInt(Config.SP_KEY_PRK_ID,0);
-        Log.i("로그", "prk_id : " + prk_id);
+        prkId = sp.getInt(Config.SP_KEY_PRK_ID,0);
+        Log.i("로그", "prk_id : " + prkId);
 
     }
 
@@ -185,11 +206,32 @@ public class FourthFragment extends Fragment {
     // 데이터를 처음 가져올때만 실행하는 함수
     // 데이터의 초기화도 필요하다.
     private void getNetworkData() {
+
+        // 저장된 prkId(SP_KEY_PRK_ID) 가 없을 경우
+        if (prkId == 0) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+            alert.setTitle("주차 위치 정보 없음");
+            alert.setMessage("주차 완료 후, 사용해주세요.");
+            alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                    mainActivity.changeFragment(R.id.secondFragment, secondFragment);
+                }
+
+            });
+            //알러트 다이얼로그의 버튼을 안누르면, 화면이 넘어가지 않게..
+            alert.setCancelable(false);
+            alert.show();
+            return;
+        }
+
+
         dataList.clear();
         count = 1;
-        Retrofit retrofit = NetworkClient.getRetrofitClient(getActivity(),Config.PP_BASE_URL);
+        Retrofit retrofit = NetworkClient.getRetrofitClient(getContext(),Config.PP_BASE_URL);
         ApiFourthFragment api = retrofit.create(ApiFourthFragment.class);
-        Call<DataListRes> call = api.getPay(prk_id);
+        Call<DataListRes> call = api.getPay(prkId);
         call.enqueue(new Callback<DataListRes>() {
             @Override
             public void onResponse(Call<DataListRes> call, Response<DataListRes> response) {
@@ -197,8 +239,6 @@ public class FourthFragment extends Fragment {
                     dataList = response.body().getItems();
                     prkTime2.setText(dataList.get(0).getUse_prk_at());
                     prkPay2.setText(String.valueOf(dataList.get(0).getEnd_pay()));
-
-
                 }
             }
 
@@ -207,6 +247,32 @@ public class FourthFragment extends Fragment {
 
             }
         });
+    }
+
+    public void getNetworkData2(){
+        Retrofit retrofit = NetworkClient.getRetrofitClient(getContext(),Config.PP_BASE_URL);
+        ApiFourthFragment api = retrofit.create(ApiFourthFragment.class);
+        Call<DataListRes> call = api.endParking(prkId,data);
+        call.enqueue(new Callback<DataListRes>() {
+            @Override
+            public void onResponse(Call<DataListRes> call, Response<DataListRes> response) {
+                if (response.isSuccessful()){
+                    // HTTP 상태 코드가 200일때
+
+                }
+            }
+            @Override
+            public void onFailure(Call<DataListRes> call, Throwable t) {
+                Log.i("로그", "결과: 실패");
+                t.printStackTrace();
+
+
+            }
+        });
+
+
+
+
     }
 
 
