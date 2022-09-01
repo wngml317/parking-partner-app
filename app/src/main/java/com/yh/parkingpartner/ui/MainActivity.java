@@ -36,6 +36,8 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static Activity activity;
+
     BottomNavigationView navigationView;
     String accessToken;
     String name;
@@ -67,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // 로그아웃 시, MainActivity 종료할 때 필요
+        activity = MainActivity.this;
 
         Util.setTimeZone("Asia/Seoul", Locale.KOREA);
         AlarmUtil.setAlarm(this, Util.NOTIFICATION_REQUEST_CODE);
