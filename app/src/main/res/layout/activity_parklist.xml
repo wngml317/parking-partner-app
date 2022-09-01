@@ -26,31 +26,35 @@
             android:layout_marginRight="10dp"
             android:orientation="horizontal">
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnDistance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="3dp"
                 android:layout_weight="1"
-                android:backgroundTint="@color/pp_main"
+                android:background="@drawable/btn_ripple"
+                android:enabled="false"
+                android:textColor="@drawable/btn_text_selector"
                 android:text="거리순" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnCharge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="3dp"
                 android:layout_weight="1"
-                android:backgroundTint="@color/pp_main"
+                android:background="@drawable/btn_ripple"
+                android:textColor="@drawable/btn_text_selector"
                 android:text="요금 낮은순" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnSpot"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="3dp"
                 android:layout_weight="1"
-                android:backgroundTint="@color/pp_main"
+                android:background="@drawable/btn_ripple"
+                android:textColor="@drawable/btn_text_selector"
                 android:text="주차장 총 구획수" />
 
         </LinearLayout>
