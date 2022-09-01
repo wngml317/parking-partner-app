@@ -151,6 +151,7 @@ public class FourthFragment extends Fragment {
                     prkNm.setText(String.valueOf(dataList.get(0).getPrk_plce_nm()));
                     prkStart.setText(dataList.get(0).getStart_prk_at().replace("T"," ").substring(0,16));
                     prkLct2.setText(dataList.get(0).getPrk_area());
+                    prkPay2.setText(String.valueOf(dataList.get(0).getEnd_pay()));
                     time = dataList.get(0).getUse_prk_at().split(":");
                     if (time[0].equals("0") ) {
                         prkTime2.setText(time[1] + "분");
@@ -281,7 +282,6 @@ public class FourthFragment extends Fragment {
         call.enqueue(new Callback<DataListRes>() {
             @Override
             public void onResponse(Call<DataListRes> call, Response<DataListRes> response) {
-                dismissProgress();
                 if (response.isSuccessful()){
                     DataListRes dataListRes=response.body();
                     if (dataListRes.getResult().equals("success")){
@@ -305,10 +305,6 @@ public class FourthFragment extends Fragment {
                         alert.show();
                     }
 
-
-
-                    // HTTP 상태 코드가 200일때
-
                 }
             }
             @Override
@@ -330,10 +326,5 @@ public class FourthFragment extends Fragment {
         progressDialog.show();
     }
     //프로그래스다이얼로그 숨기기
-    void dismissProgress(){
-        progressDialog.dismiss();
-    }
-
-
 
 }
