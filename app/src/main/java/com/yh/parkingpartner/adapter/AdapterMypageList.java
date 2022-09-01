@@ -59,12 +59,12 @@ public class AdapterMypageList extends RecyclerView.Adapter<AdapterMypageList.Vi
         holder.txtPay.setText("요금 ( " + review.getParking_chrge_bs_time() + "분 / " + review.getParking_chrge_bs_chrg() + "원 )");
         time = review.getUse_prk_at().split(":");
         if (time[0].equals("0") ) {
-            holder.txtUsePay.setText(" : "+time[1] + "분"+" / " + review.getEnd_pay() + "원");
+            holder.txtUsePay.setText(":  "+time[1] + "분"+" / " + review.getEnd_pay() + "원");
         } else {
             if (review.getUse_prk_at().contains("day")) {
-                holder.txtUsePay.setText(" : "+time[0] + "시간 " + time[1] + "분"+" / " + review.getEnd_pay() + "원");
+                holder.txtUsePay.setText(":  "+time[0] + "시간 " + time[1] + "분"+" / " + review.getEnd_pay() + "원");
             } else {
-                holder.txtUsePay.setText(" : "+time[0] + "시간 " + time[1] + "분"+" / " + review.getEnd_pay() + "원");
+                holder.txtUsePay.setText(":  "+time[0] + "시간 " + time[1] + "분"+" / " + review.getEnd_pay() + "원");
             }
         }
 

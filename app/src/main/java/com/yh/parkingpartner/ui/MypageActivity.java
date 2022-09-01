@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,6 +44,7 @@ public class MypageActivity extends AppCompatActivity {
 
     String accessToken;
     int prkId;
+    int pushprkId;
     RecyclerView recyclerView;
     ProgressBar progressBar;
     AdapterMypageList adapter;
@@ -299,6 +301,12 @@ public class MypageActivity extends AppCompatActivity {
                                 editor.putString("accessToken", "");
                                 editor.putInt("prk_id", 0);
                                 editor.apply();
+
+                                prkId = sp.getInt(Config.SP_KEY_PRK_ID, 0);
+                                pushprkId = sp.getInt(Config.SP_KEY_PUSH_PRK_ID, 0);
+
+                                Log.i("로그: ", "prk_id : " + prkId);
+                                Log.i("로그: ", "push_prk_id : " + pushprkId);
 
                                 // 로그아웃 시, 메인 액티비티 종료
                                 MainActivity mainActivity = (MainActivity) MainActivity.activity;
