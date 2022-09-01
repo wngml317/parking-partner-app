@@ -15,23 +15,28 @@ public class Data implements Serializable {
     int parking_chrge_bs_chrg;          // 기본요금 0,
     int parking_chrge_adit_unit_time;       // 추가단위시간 10,
     int parking_chrge_adit_unit_chrge;      // 추가단위요금 0,
-
     int parking_chrge_one_day_chrge;      // 1일요금 0,
     float rating;                                           // 별점평균 0.0,
 
-
-
     int prk_id;                             //주차완료id
+    int push_prk_id;                    //푸위알림용도 최종 주차완료id
     String start_prk_at;                //주차입차시간
     String img_prk;                      //주차사진URL
     String prk_area;                     //주차구역
     String end_prk;                      //주차출차시간
     String use_prk_at;                      //주차시간(분)
     int end_pay;                             //주차요금
-
     int charge;
     double distance;
     int available;
+
+    public int getPush_prk_id() {
+        return push_prk_id;
+    }
+
+    public void setPush_prk_id(int push_prk_id) {
+        this.push_prk_id = push_prk_id;
+    }
 
     public void setDistance(double distance) {
         this.distance = distance;

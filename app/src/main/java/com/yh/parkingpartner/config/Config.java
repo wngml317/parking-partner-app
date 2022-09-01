@@ -23,6 +23,8 @@ public class Config {
     // 주차완료정보 관련 KEY명
     // prk_id-주차ID
     public static final String SP_KEY_PRK_ID="prk_id";
+    // push_prk_id-푸쉬 알림용도 최종 주차ID
+    public static final String SP_KEY_PUSH_PRK_ID="push_prk_id";
     //prk_center_id-주차장ID
     public static final String SP_KEY_PRK_CENTER_ID="prk_center_id";
     //prk_plce_nm-주차장명
