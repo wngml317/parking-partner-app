@@ -62,6 +62,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import com.skt.Tmap.TMapTapi;
+
 
 public class FirstFragment extends Fragment
         implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
@@ -114,6 +116,9 @@ public class FirstFragment extends Fragment
         mainActivity = (MainActivity) getActivity();
         mainActivity.getSupportActionBar().setTitle("");
         blnCreatedView=false;
+
+        TMapTapi tmaptapi = new TMapTapi(getContext());
+        tmaptapi.setSKTMapAuthentication (Config.TM_API_KEY);
 
         locationManager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
         //gps 로케이션 위치 받아오는 리스너
@@ -270,6 +275,14 @@ public class FirstFragment extends Fragment
                 alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+
+                        TMapTapi tMapTapi = new TMapTapi(getContext());
+                        boolean isTmapApp = tMapTapi.isTmapApplicationInstalled();
+                        if (isTmapApp == false){
+                            Toast.makeText(mainActivity, "Tmap앱이 깔려있지 않습니다.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            tMapTapi.invokeSearchPortal(prk_plce_nm.getText().toString());
+                        }
                         // TODO: Tmap 연동 코딩...
 //                        Intent intent=new Intent();
 //                        startActivity(intent);
