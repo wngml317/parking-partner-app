@@ -33,14 +33,6 @@ public class Data implements Serializable {
     double distance;
     int available;
 
-    public String getUse_prk_at() {
-        return use_prk_at;
-    }
-
-    public void setUse_prk_at(String use_prk_at) {
-        this.use_prk_at = use_prk_at;
-    }
-
     public void setDistance(double distance) {
         this.distance = distance;
     }
