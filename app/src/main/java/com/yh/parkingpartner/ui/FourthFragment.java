@@ -1,6 +1,8 @@
 package com.yh.parkingpartner.ui;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -48,6 +50,7 @@ public class FourthFragment extends Fragment {
 
     MainActivity mainActivity;
     Fragment fourthFragment;
+    ProgressDialog progressDialog;
 
     ArrayList<Data> dataList = new ArrayList<>();
     Data data=new Data();
@@ -121,6 +124,7 @@ public class FourthFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_fourth,container,false);
 
 
+        fourthFragment = new FourthFragment();
         secondFragment = new SecondFragment();
         prkNm = (TextView) rootView.findViewById(R.id.prkNm);
         prkStart = (TextView) rootView.findViewById(R.id.prkStart);
@@ -147,6 +151,17 @@ public class FourthFragment extends Fragment {
                     prkNm.setText(String.valueOf(dataList.get(0).getPrk_plce_nm()));
                     prkStart.setText(dataList.get(0).getStart_prk_at().replace("T"," ").substring(0,16));
                     prkLct2.setText(dataList.get(0).getPrk_area());
+                    time = dataList.get(0).getUse_prk_at().split(":");
+                    if (time[0].equals("0") ) {
+                        prkTime2.setText(time[1] + "분");
+                    } else {
+                        if (dataList.get(0).getUse_prk_at().contains("day")) {
+                            prkTime2.setText(""+time[0] + "시간 " + time[1] + "분");
+                        } else {
+                            prkTime2.setText(""+time[0] + "시간 " + time[1] + "분");
+                        }
+                    }
+
 
                 }
             }
@@ -164,7 +179,7 @@ public class FourthFragment extends Fragment {
 
 
                 btnCheckPay.setEnabled(true);
-                btnEndParking.setEnabled(false);
+                btnEndParking.setEnabled(true);
                 getNetworkData();
             }
         });
@@ -237,8 +252,18 @@ public class FourthFragment extends Fragment {
             public void onResponse(Call<DataListRes> call, Response<DataListRes> response) {
                 if (response.isSuccessful()) {
                     dataList = response.body().getItems();
-                    prkTime2.setText(dataList.get(0).getUse_prk_at());
                     prkPay2.setText(String.valueOf(dataList.get(0).getEnd_pay()));
+                    time = dataList.get(0).getUse_prk_at().split(":");
+                    if (time[0].equals("0") ) {
+                        prkTime2.setText(""+time[1] + "분");
+                    } else {
+                        if (dataList.get(0).getUse_prk_at().contains("day")) {
+                            prkTime2.setText(""+time[0] + "시간 " + time[1] + "분");
+                        } else {
+                            prkTime2.setText(""+time[0] + "시간 " + time[1] + "분");
+                        }
+                    }
+
                 }
             }
 
@@ -256,7 +281,32 @@ public class FourthFragment extends Fragment {
         call.enqueue(new Callback<DataListRes>() {
             @Override
             public void onResponse(Call<DataListRes> call, Response<DataListRes> response) {
+                dismissProgress();
                 if (response.isSuccessful()){
+                    DataListRes dataListRes=response.body();
+                    if (dataListRes.getResult().equals("success")){
+                        ReadSharedPreferences();
+                        android.app.AlertDialog.Builder alert=new android.app.AlertDialog.Builder(getContext());
+                        if(data.getPrk_id()==0){
+                            alert.setTitle("출차가 완료되었습니다.");
+                        }
+                        alert.setMessage("리뷰를 작성하시겠습니까?");
+                        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Intent intent = new Intent(getActivity(),ReviewActivity.class);
+                                startActivity(intent);
+                            }
+                        });
+                        alert.setNegativeButton("No", null);
+                        //알러트 다이얼로그의 버튼을 안누르면, 화면이 넘어가지 않게..
+                        alert.setCancelable(false);
+                        //다이얼로그 화면에 보이기
+                        alert.show();
+                    }
+
+
+
                     // HTTP 상태 코드가 200일때
 
                 }
@@ -270,9 +320,18 @@ public class FourthFragment extends Fragment {
             }
         });
 
+    }
 
-
-
+    //프로그래스다이얼로그 표시
+    void showProgress(String msg){
+        progressDialog=new ProgressDialog(getContext());
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setMessage(msg);
+        progressDialog.show();
+    }
+    //프로그래스다이얼로그 숨기기
+    void dismissProgress(){
+        progressDialog.dismiss();
     }
 
 
