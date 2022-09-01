@@ -19,12 +19,14 @@ public class Data implements Serializable {
     int parking_chrge_one_day_chrge;      // 1일요금 0,
     float rating;                                           // 별점평균 0.0,
 
+
+
     int prk_id;                             //주차완료id
     String start_prk_at;                //주차입차시간
     String img_prk;                      //주차사진URL
     String prk_area;                     //주차구역
     String end_prk;                      //주차출차시간
-    int use_prk_at;                      //주차시간(분)
+    String use_prk_at;                      //주차시간(분)
     int end_pay;                             //주차요금
 
     int charge;
@@ -95,14 +97,6 @@ public class Data implements Serializable {
         this.end_prk = end_prk;
     }
 
-    public int getUse_prk_at() {
-        return use_prk_at;
-    }
-
-    public void setUse_prk_at(int use_prk_at) {
-        this.use_prk_at = use_prk_at;
-    }
-
     public int getEnd_pay() {
         return end_pay;
     }
@@ -157,6 +151,14 @@ public class Data implements Serializable {
 
     public void setPrk_plce_entrc_la(double prk_plce_entrc_la) {
         this.prk_plce_entrc_la = prk_plce_entrc_la;
+    }
+
+    public String getUse_prk_at() {
+        return use_prk_at;
+    }
+
+    public void setUse_prk_at(String use_prk_at) {
+        this.use_prk_at = use_prk_at;
     }
 
     public double getPrk_plce_entrc_lo() {
