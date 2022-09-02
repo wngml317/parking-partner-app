@@ -297,7 +297,7 @@ public class SecondFragment extends Fragment {
         // prk_id-주차ID
         data.setPrk_id(sp.getInt(Config.SP_KEY_PRK_ID, 0));
         // push_prk_id-최종 주차ID
-        data.setPush_prk_id(sp.getInt(Config.SP_KEY_PRK_ID,0));
+        data.setPush_prk_id(sp.getInt(Config.SP_KEY_PUSH_PRK_ID,0));
         //prk_center_id-주차장ID
         data.setPrk_center_id(sp.getString(Config.SP_KEY_PRK_CENTER_ID, ""));
         Log.i("로그", "getPrk_center_id : "+data.getPrk_center_id());
@@ -334,7 +334,7 @@ public class SecondFragment extends Fragment {
         // prk_id-주차ID
         editor.putInt(Config.SP_KEY_PRK_ID, data.getPrk_id());
         // push_prk_id-최종 주차ID
-        editor.putInt(Config.SP_KEY_PRK_ID,data.getPush_prk_id());
+        editor.putInt(Config.SP_KEY_PUSH_PRK_ID,data.getPush_prk_id());
         //prk_center_id-주차장ID
         editor.putString(Config.SP_KEY_PRK_CENTER_ID, data.getPrk_center_id());
         //prk_plce_nm-주차장명
@@ -360,7 +360,11 @@ public class SecondFragment extends Fragment {
 
         //저장한다.
         editor.apply();
+
+        Log.i("SP_KEY_PRK_ID" , Config.SP_KEY_PRK_ID);
     }
+
+
 
     private void getNetworkData(int pApiGbn) {
         if(pApiGbn==1) {
