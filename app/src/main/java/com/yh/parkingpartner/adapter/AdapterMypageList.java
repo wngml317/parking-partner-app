@@ -44,7 +44,6 @@ public class AdapterMypageList extends RecyclerView.Adapter<AdapterMypageList.Vi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Review review = reviewList.get(position);
-        Log.i("로그 : ", "리뷰 ID : "+review.getId());
 
         holder.txtPrkNm.setText(review.getPrk_plce_nm());
         holder.txtPrkAdres.setText(review.getPrk_plce_adres());
@@ -71,11 +70,12 @@ public class AdapterMypageList extends RecyclerView.Adapter<AdapterMypageList.Vi
 
         Glide.with(context).load(review.getImg_prk()).placeholder(R.drawable.ic_baseline_photo_camera_back_24).into(holder.imgPrk);
 
-        if (review.getRating() == 0 && review.getId() == 0) {
-            holder.btnReview.setText("리뷰 작성");
-        } else {
+        if (review.getId() != 0) {
             holder.btnReview.setText("리뷰 수정");
             holder.ratingBar.setRating(review.getRating());
+        } else {
+            holder.btnReview.setText("리뷰 작성");
+            holder.ratingBar.setRating(0);
         }
     }
 

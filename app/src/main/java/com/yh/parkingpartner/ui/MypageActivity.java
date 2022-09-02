@@ -63,7 +63,7 @@ public class MypageActivity extends AppCompatActivity {
     int count = 0;
     String order = "total";
     int offset = 0;
-    int limit = 10;
+    int limit = 25;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

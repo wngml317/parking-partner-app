@@ -1,5 +1,7 @@
 package com.yh.parkingpartner.ui;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -44,6 +46,7 @@ public class FourthFragment extends Fragment {
     ArrayList<Data> dataList = new ArrayList<>();
     Data data=new Data();
     Fragment secondFragment;
+    Fragment firstFragment;
     TextView prkNm;
     TextView prkStart;
     TextView prkLct;
@@ -55,6 +58,7 @@ public class FourthFragment extends Fragment {
     Button btnCheckPay;
     Button btnEndParking;
     int prkId;
+    int pushprkId;
     int count = 0;
     DataListRes dataListRes;
     String[] time;
@@ -115,6 +119,7 @@ public class FourthFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_fourth,container,false);
 
 
+        firstFragment = new FirstFragment();
         fourthFragment = new FourthFragment();
         secondFragment = new SecondFragment();
         prkNm = (TextView) rootView.findViewById(R.id.prkNm);
@@ -140,39 +145,6 @@ public class FourthFragment extends Fragment {
             public void onResponse(Call<DataListRes> call, Response<DataListRes> response) {
                 Log.i("로그", "결과 : "+response.isSuccessful());
                 if(response.isSuccessful()){
-
-                    if (prkId == 0) {
-                        AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                        alert.setTitle("주차 위치 정보 없음");
-                        alert.setMessage("주차 완료 후, 사용해주세요.");
-                        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                                mainActivity.changeFragment(R.id.secondFragment, secondFragment);
-                            }
-
-                        });
-                        //알러트 다이얼로그의 버튼을 안누르면, 화면이 넘어가지 않게..
-                        alert.setCancelable(false);
-                        alert.show();
-                        return;
-                    }
-                    dataList = response.body().getItems();
-                    prkNm.setText(String.valueOf(dataList.get(0).getPrk_plce_nm()));
-                    prkStart.setText(dataList.get(0).getStart_prk_at().replace("T"," ").substring(0,16));
-                    prkLct2.setText(dataList.get(0).getPrk_area());
-                    prkPay2.setText(String.valueOf(dataList.get(0).getEnd_pay()));
-                    time = dataList.get(0).getUse_prk_at().split(":");
-                    if (time[0].equals("0") ) {
-                        prkTime2.setText(time[1] + "분");
-                    } else {
-                        if (dataList.get(0).getUse_prk_at().contains("day")) {
-                            prkTime2.setText(""+time[0] + "시간 " + time[1] + "분");
-                        } else {
-                            prkTime2.setText(""+time[0] + "시간 " + time[1] + "분");
-                        }
-                    }
                     getNetworkData();
                 }
             }
@@ -202,7 +174,7 @@ public class FourthFragment extends Fragment {
 
 
                 btnCheckPay.setEnabled(false);
-                btnEndParking.setEnabled(true);
+                btnEndParking.setEnabled(false);
                 getNetworkData2();
             }
         });
@@ -218,7 +190,10 @@ public class FourthFragment extends Fragment {
         //SharedPref소erences 를 이용해서, 앱 내의 저장에 영구저장된 데이터를 읽어오는 방법
         SharedPreferences sp = getActivity().getSharedPreferences(Config.SP_NAME, getActivity().MODE_PRIVATE);
         prkId = sp.getInt(Config.SP_KEY_PRK_ID,0);
+        pushprkId = sp.getInt(Config.SP_KEY_PUSH_PRK_ID, 0);
         Log.i("로그", "prk_id : " + prkId);
+        Log.i("로그", "prk_id : " + pushprkId);
+
 
     }
 
@@ -226,17 +201,17 @@ public class FourthFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getNetworkData();
     }
 
     // 데이터를 처음 가져올때만 실행하는 함수
     // 데이터의 초기화도 필요하다.
     private void getNetworkData() {
-
+        dataList.clear();
+        count = 1;
 
         if (prkId == 0) {
             AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-            alert.setTitle("주차 완료 정보 없음");
+            alert.setTitle("주차 위치 정보 없음");
             alert.setMessage("주차 완료 후, 사용해주세요.");
             alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
@@ -252,9 +227,6 @@ public class FourthFragment extends Fragment {
             return;
         }
 
-
-        dataList.clear();
-        count = 1;
         Retrofit retrofit = NetworkClient.getRetrofitClient(getContext(),Config.PP_BASE_URL);
         ApiFourthFragment api = retrofit.create(ApiFourthFragment.class);
         Call<DataListRes> call = api.getPay(prkId);
@@ -263,6 +235,9 @@ public class FourthFragment extends Fragment {
             public void onResponse(Call<DataListRes> call, Response<DataListRes> response) {
                 if (response.isSuccessful()) {
                     dataList = response.body().getItems();
+                    prkNm.setText(dataList.get(0).getPrk_plce_nm());
+                    prkStart.setText(dataList.get(0).getStart_prk_at().replace("T"," ").substring(0, 16));
+                    prkLct2.setText(dataList.get(0).getPrk_area());
                     prkPay2.setText(String.valueOf(dataList.get(0).getEnd_pay()));
                     time = dataList.get(0).getUse_prk_at().split(":");
                     if (time[0].equals("0") ) {
@@ -295,7 +270,17 @@ public class FourthFragment extends Fragment {
                 if (response.isSuccessful()){
                     DataListRes dataListRes=response.body();
                     if (dataListRes.getResult().equals("success")){
-                        ReadSharedPreferences();
+                        SharedPreferences sp = getActivity().getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putInt("prk_id", 0);
+                        editor.putInt("push_prk_id",0);
+                        Log.i("로그", "결과 : " + editor.putInt("prk_id", 0));
+                        Log.i("로그", "결과 : " + editor.putInt("push_prk_id",0));
+                        editor.apply();
+
+                        prkId = sp.getInt(Config.SP_KEY_PRK_ID, 0);
+                        pushprkId = sp.getInt(Config.SP_KEY_PUSH_PRK_ID, 0);
+
                         android.app.AlertDialog.Builder alert=new android.app.AlertDialog.Builder(getContext());
                         if(data.getPrk_id()==0){
                             alert.setTitle("출차가 완료되었습니다.");
@@ -304,11 +289,21 @@ public class FourthFragment extends Fragment {
                         alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Intent intent = new Intent(getActivity(), ReviewEditActivity.class);
+                                Intent intent = new Intent(getActivity(), ReviewAddActivity.class);
+                                intent.putExtra("prkId",prkId);
+                                intent.putExtra("prkNm",dataList.get(0).getPrk_plce_nm());
+                                intent.putExtra("prkEnd",dataListRes.getItems().get(0).getEnd_prk());
+                                Log.i("로그", "결과 : " + dataListRes.getItems().get(0).getEnd_prk());
                                 startActivity(intent);
                             }
                         });
-                        alert.setNegativeButton("No", null);
+                        alert.setNegativeButton("No",new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i){
+                                Log.i("로그", "결과 : 성공 " );
+                                mainActivity.changeFragment(R.id.firstFragment, firstFragment);
+                            }
+                        });
                         //알러트 다이얼로그의 버튼을 안누르면, 화면이 넘어가지 않게..
                         alert.setCancelable(false);
                         //다이얼로그 화면에 보이기

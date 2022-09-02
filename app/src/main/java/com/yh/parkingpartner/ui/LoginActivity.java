@@ -114,6 +114,22 @@ public class LoginActivity extends AppCompatActivity {
                                 editor.putString(Config.SP_KEY_NAME, registerRes.getName());
                                 editor.putString(Config.SP_KEY_EMAIL, user.getEmail());
                                 editor.putString(Config.SP_KEY_IMG_PROFILE, registerRes.getImg_profile());
+
+                                editor.putString(Config.SP_KEY_PRK_CENTER_ID, registerRes.getPrk_center_id());
+                                editor.putString(Config.SP_KEY_PRK_PLCE_NM, registerRes.getPrk_plce_nm());
+                                editor.putString(Config.SP_KEY_PRK_PLCE_ADRES, registerRes.getPrk_plce_adres());
+                                editor.putInt(Config.SP_KEY_PARKING_CHRGE_BS_TIME, registerRes.getParking_chrge_bs_time());
+                                editor.putInt(Config.SP_KEY_PARKING_CHRGE_BS_CHRG, registerRes.getParking_chrge_bs_chrg());
+                                editor.putInt(Config.SP_KEY_PARKING_CHRGE_ADIT_UNIT_TIME, registerRes.getParking_chrge_adit_unit_time());
+                                editor.putInt(Config.SP_KEY_PARKING_CHRGE_ADIT_UNIT_CHRGE, registerRes.getParking_chrge_adit_unit_chrge());
+                                editor.putInt(Config.SP_KEY_PARKING_CHRGE_ONE_DAY_CHRGE, registerRes.getParking_chrge_one_day_chrge());
+                                editor.putInt(Config.SP_KEY_PRK_ID,registerRes.getPrk_id());
+                                editor.putString(Config.SP_KEY_START_PRK_AT,registerRes.getStart_prk_at());
+                                editor.putString(Config.SP_KEY_IMG_PAK,registerRes.getImg_prk());
+                                editor.putString(Config.SP_KEY_PRK_AREA,registerRes.getPrk_area());
+
+                                editor.putInt(Config.SP_KEY_PUSH_PRK_ID,registerRes.getPrk_id());
+
                                 //저장한다.
                                 editor.apply();
 
