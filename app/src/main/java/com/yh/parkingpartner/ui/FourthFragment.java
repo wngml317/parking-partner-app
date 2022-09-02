@@ -46,6 +46,7 @@ public class FourthFragment extends Fragment {
     ArrayList<Data> dataList = new ArrayList<>();
     Data data=new Data();
     Fragment secondFragment;
+    Fragment firstFragment;
     TextView prkNm;
     TextView prkStart;
     TextView prkLct;
@@ -118,6 +119,7 @@ public class FourthFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_fourth,container,false);
 
 
+        firstFragment = new FirstFragment();
         fourthFragment = new FourthFragment();
         secondFragment = new SecondFragment();
         prkNm = (TextView) rootView.findViewById(R.id.prkNm);
@@ -172,7 +174,7 @@ public class FourthFragment extends Fragment {
 
 
                 btnCheckPay.setEnabled(false);
-                btnEndParking.setEnabled(true);
+                btnEndParking.setEnabled(false);
                 getNetworkData2();
             }
         });
@@ -295,7 +297,13 @@ public class FourthFragment extends Fragment {
                                 startActivity(intent);
                             }
                         });
-                        alert.setNegativeButton("No", null);
+                        alert.setNegativeButton("No",new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i){
+                                Log.i("로그", "결과 : 성공 " );
+                                mainActivity.changeFragment(R.id.firstFragment, firstFragment);
+                            }
+                        });
                         //알러트 다이얼로그의 버튼을 안누르면, 화면이 넘어가지 않게..
                         alert.setCancelable(false);
                         //다이얼로그 화면에 보이기
