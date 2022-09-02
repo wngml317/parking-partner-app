@@ -128,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
                                 editor.putString(Config.SP_KEY_IMG_PAK,registerRes.getImg_prk());
                                 editor.putString(Config.SP_KEY_PRK_AREA,registerRes.getPrk_area());
 
-                                editor.putInt(Config.SP_KEY_PRK_ID,registerRes.getPush_prk_id());
+                                editor.putInt(Config.SP_KEY_PUSH_PRK_ID,registerRes.getPrk_id());
 
                                 //저장한다.
                                 editor.apply();

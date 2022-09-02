@@ -361,7 +361,6 @@ public class SecondFragment extends Fragment {
         //저장한다.
         editor.apply();
 
-        Log.i("SP_KEY_PRK_ID" , Config.SP_KEY_PRK_ID);
     }
 
 
