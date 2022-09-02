@@ -1,5 +1,7 @@
 package com.yh.parkingpartner.config;
 
+import java.util.Date;
+
 public class Config {
     //구글API
     public static final String GG_BASE_URL="https://maps.googleapis.com";
@@ -7,7 +9,8 @@ public class Config {
 
     //파킹파트너API
 //    public static final String PP_BASE_URL="aws endpoint";
-    public static final String PP_BASE_URL="http://192.168.0.56:5000";
+    public static final String PP_BASE_URL="http://10.0.2.2:5000";
+//    public static final String PP_BASE_URL="http://192.168.0.55:5000";
 
     //SKTmapAPI
     public static final String TM_API_KEY="l7xx20fe06f126e4489bb97ce442c501b8c5";
@@ -50,5 +53,9 @@ public class Config {
 
     // 주차장 지도표시 검색 반경 KEY명
     public static final String SP_KEY_DEFAULT_RADIUS="default_radius";
+
+    //푸쉬알림용도 KEY명
+    public static final String SP_KEY_PREVIOUS_PUSH_PRK_ID="previous_push_prk_id";
+    public static final String SP_KEY_LAST_NOTIFICATION_DATETIME="last_notification_datetime";
 
 }

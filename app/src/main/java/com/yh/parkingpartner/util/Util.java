@@ -20,7 +20,7 @@ public class Util {
 
     public static final int NOTIFICATION_ID = 0;
     //todo : 테스트로 짧은 시간 설정... 실제로는 30분 정보로 셋팅 할 것
-    public static final int NOTIFICATION_USE_PRK_AT = 5;     //입차시간 기준 경과 단위(분)
+    public static final int NOTIFICATION_USE_PRK_AT = 1;     //입차시간 기준 경과 단위(분)
 
     public static DecimalFormat myDecFormatter = new DecimalFormat("###,###");
     public static DecimalFormat myFloatFormatter = new DecimalFormat("###,###.##");
@@ -46,5 +46,9 @@ public class Util {
     public static Date getStringToDateTime(String pDateTime) throws ParseException {
         Date date = mFormat.parse(pDateTime);
         return date;
+    }
+
+    public static String getDatetimeToString(Date pDateTime){
+        return mFormat.format(pDateTime);
     }
 }

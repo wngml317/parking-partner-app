@@ -147,7 +147,9 @@ public class FirstFragment extends Fragment
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
-//                Log.i("로그", "위도 : " + location.getLatitude() + ", 경도 : " + location.getLongitude());
+
+                Log.i("로그", "onLocationChanged 위도 : " + location.getLatitude() + ", 경도 : " + location.getLongitude());
+
                 nowLatitude=location.getLatitude();
                 nowLongitude=location.getLongitude();
 
@@ -156,6 +158,24 @@ public class FirstFragment extends Fragment
                     dismissProgress();
                     getNetworkData(Util.MAP_MY_ARROUND, null, null, null);
                 }
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                LocationListener.super.onStatusChanged(provider, status, extras);
+                Log.i("로그", "onStatusChanged provider : " + provider + ", status : " + status);
+            }
+
+            @Override
+            public void onProviderEnabled(@NonNull String provider) {
+                LocationListener.super.onProviderEnabled(provider);
+                Log.i("로그", "onProviderEnabled provider : " + provider);
+            }
+
+            @Override
+            public void onProviderDisabled(@NonNull String provider) {
+                LocationListener.super.onProviderDisabled(provider);
+                Log.i("로그", "onProviderDisabled provider : " + provider);
             }
         };
 

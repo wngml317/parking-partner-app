@@ -17,7 +17,7 @@ public class AlarmUtil {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context
                 , requestCode
                 , intent
-                , PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE
+                , PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_MUTABLE
         );
 
         alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP

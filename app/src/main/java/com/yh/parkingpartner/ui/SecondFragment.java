@@ -363,8 +363,6 @@ public class SecondFragment extends Fragment {
 
     }
 
-
-
     private void getNetworkData(int pApiGbn) {
         if(pApiGbn==1) {
             // 주차장 찾기

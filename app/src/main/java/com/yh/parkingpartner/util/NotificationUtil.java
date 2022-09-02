@@ -35,35 +35,70 @@ public class NotificationUtil extends BroadcastReceiver {
     Data data=new Data();
 
     int diffMin;
-    int unitDiv;
-    int unitMod;
+    Date lastNotificationTime;
+    int previousPushPrkId;
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        //todo : 주차완료 정보 확인하여 입차시간 기준 설정한 분 경과 단위로 알림을 출력한다.
+        Log.i("로그", "NotificationUtil.onReceive 시작");
+        //주차완료 정보 확인하여 입차시간 기준 설정한 분 경과 단위로 알림을 출력한다.
         //Util.NOTIFICATION_USE_PRK_AT_INTERVAL = 입차시간 기준 경과 단위
+
         readSharedPreferences(context);
+        Log.i("로그", "NotificationUtil.onReceive data.getPush_prk_id()="+data.getPush_prk_id());
+        Log.i("로그", "NotificationUtil.onReceive previousPushPrkId="+previousPushPrkId);
+
         if(data.getPush_prk_id()==0){
+            previousPushPrkId=0;
+            lastNotificationTime=null;
+            writeSharedPreferences(context);
             Log.i("로그", "NotificationUtil.onReceive 주차완료 정보 없음");
             return;
         }
+
+        if(data.getPush_prk_id()!=previousPushPrkId){
+            Log.i("로그", "NotificationUtil.onReceive 주차완료 신규");
+            previousPushPrkId=data.getPush_prk_id();
+            try {
+                lastNotificationTime=Util.getStringToDateTime(data.getStart_prk_at());
+                Log.i("로그", "NotificationUtil.onReceive 입차시간 확인");
+            } catch (ParseException e) {
+                Log.i("로그", "NotificationUtil.onReceive 입차시간 확인 에러1");
+                e.printStackTrace();
+                return;
+            }
+        }else{
+            Log.i("로그", "NotificationUtil.onReceive 주차완료 동일");
+            if(lastNotificationTime==null){
+                try {
+                    lastNotificationTime=Util.getStringToDateTime(data.getStart_prk_at());
+                } catch (ParseException e) {
+                    Log.i("로그", "NotificationUtil.onReceive 입차시간 확인 에러2");
+                    e.printStackTrace();
+                    return;
+                }
+            }
+        }
+
+        Log.i("로그", "NotificationUtil.onReceive lastNotificationTime="+Util.getDatetimeToString(lastNotificationTime));
+        Log.i("로그", "NotificationUtil.onReceive 현재시간="+Util.getNowDateTime());
 
         try {
             Date startPrkAt=Util.getStringToDateTime(data.getStart_prk_at());
             diffMin = (int) ((System.currentTimeMillis() - startPrkAt.getTime()) / 60000);         //분 차이
             Log.i("로그", "NotificationUtil.onReceive 주차 경과 시간(분) : "+diffMin);
-            unitDiv = diffMin / Util.NOTIFICATION_USE_PRK_AT;
-            if(unitDiv > 0){
-                unitMod=diffMin % Util.NOTIFICATION_USE_PRK_AT;
-                if(unitMod > 0){
-                    return;
-                }
+
+            int notificationdiffMin=(int) ((System.currentTimeMillis() - lastNotificationTime.getTime()) / 60000);         //분 차이
+            if(notificationdiffMin >= Util.NOTIFICATION_USE_PRK_AT){
+                lastNotificationTime = new Date(System.currentTimeMillis());
+                Log.i("로그", "NotificationUtil.onReceive 최종알림시간 설정 : "+Util.getDatetimeToString(lastNotificationTime));
             }else{
+                Log.i("로그", "NotificationUtil.onReceive 알림시간 안됨");
                 return;
             }
         } catch (ParseException e) {
-            Log.i("로그", "NotificationUtil.onReceive 입차시간 확인 에러");
+            Log.i("로그", "NotificationUtil.onReceive 입차시간 확인 에러3");
             e.printStackTrace();
             return;
         }
@@ -85,7 +120,7 @@ public class NotificationUtil extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getActivity(context.getApplicationContext()
                 , Util.NOTIFICATION_REQUEST_CODE
                 , notificationIntent
-                , PendingIntent.FLAG_UPDATE_CURRENT
+                , PendingIntent.FLAG_UPDATE_CURRENT  | PendingIntent.FLAG_MUTABLE
         );
 
         builder.setContentTitle("주차경과알림") //제목
@@ -106,7 +141,8 @@ public class NotificationUtil extends BroadcastReceiver {
 
         notificationManager.notify(Util.NOTIFICATION_ID, builder.build());
 
-        Log.i("로그", "NotificationUtil.onReceive");
+        writeSharedPreferences(context);
+        Log.i("로그", "NotificationUtil.onReceive 완료");
     }
 
     void readSharedPreferences(Context context){
@@ -144,5 +180,33 @@ public class NotificationUtil extends BroadcastReceiver {
         data.setParking_chrge_adit_unit_chrge(sp.getInt(Config.SP_KEY_PARKING_CHRGE_ADIT_UNIT_CHRGE, 0));
         // parking_chrge_one_day_chrge-1일요금
         data.setParking_chrge_one_day_chrge(sp.getInt(Config.SP_KEY_PARKING_CHRGE_ONE_DAY_CHRGE, 0));
+
+        if(sp.getString(Config.SP_KEY_LAST_NOTIFICATION_DATETIME, "").isEmpty()){
+            lastNotificationTime=null;
+        }else {
+            try {
+                lastNotificationTime = Util.getStringToDateTime(sp.getString(Config.SP_KEY_LAST_NOTIFICATION_DATETIME, ""));
+            } catch (ParseException e) {
+                Log.i("로그", "NotificationUtil.onReceive readSharedPreferences 최종알림시간 확인 에러");
+                e.printStackTrace();
+            }
+        }
+        previousPushPrkId=sp.getInt(Config.SP_KEY_PREVIOUS_PUSH_PRK_ID, 0);
+    }
+
+    void writeSharedPreferences(Context context){
+        //SharedPreferences 를 이용해서, 앱 내의 저장소에 영구저장된 데이터를 읽어오는 방법
+        SharedPreferences sp = context.getSharedPreferences(Config.SP_NAME, context.MODE_PRIVATE);
+        //편집기를 만든다.
+        SharedPreferences.Editor editor = sp.edit();
+        //작성한다.
+        editor.putInt(Config.SP_KEY_PREVIOUS_PUSH_PRK_ID, previousPushPrkId);
+        if(lastNotificationTime!=null) {
+            editor.putString(Config.SP_KEY_LAST_NOTIFICATION_DATETIME, Util.getDatetimeToString(lastNotificationTime));
+        }else{
+            editor.putString(Config.SP_KEY_LAST_NOTIFICATION_DATETIME, "");
+        }
+        //저장한다.
+        editor.apply();
     }
 }
