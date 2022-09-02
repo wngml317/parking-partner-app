@@ -85,7 +85,8 @@ public class NotificationUtil extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getActivity(context.getApplicationContext()
                 , Util.NOTIFICATION_REQUEST_CODE
                 , notificationIntent
-                , PendingIntent.FLAG_UPDATE_CURRENT);
+                , PendingIntent.FLAG_UPDATE_CURRENT
+        );
 
         builder.setContentTitle("주차경과알림") //제목
                 .setContentText("주차 후 "+Util.myDecFormatter.format(diffMin)+"분이 경과되었습니다.") //내용

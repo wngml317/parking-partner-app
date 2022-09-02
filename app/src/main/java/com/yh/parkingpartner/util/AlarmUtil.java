@@ -14,7 +14,12 @@ public class AlarmUtil {
         AlarmManager alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context.getApplicationContext(), NotificationUtil.class);
         // FLAG_CANCEL_CURRENT : 이전에 생성한 PendingIntent 는 취소하고 새롭게 만든다
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context
+                , requestCode
+                , intent
+                , PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
         alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP
                 , SystemClock.elapsedRealtime() + ONE_MINUTES
                 , ONE_MINUTES
