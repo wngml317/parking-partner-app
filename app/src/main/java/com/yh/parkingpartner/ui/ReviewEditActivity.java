@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -26,15 +27,15 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class ReviewAddActivity extends AppCompatActivity {
+public class ReviewEditActivity extends AppCompatActivity {
 
     String accessToken;
-
+    int reviewId;
     int prkId;
-    String prkNm;
-    String prkEnd;
     float rating;
     String content = null;
+
+    Review review;
 
     TextView txtPrkNm;
     TextView txtEnd;
@@ -45,19 +46,20 @@ public class ReviewAddActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_review_add);
+        setContentView(R.layout.activity_review_edit);
 
         // 액션바 타이틀 설정
         getSupportActionBar().setTitle("리뷰 저장");
         // 액션바 뒤로가기 버튼
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        prkId = getIntent().getIntExtra("prkId", 0);
-        prkNm = getIntent().getStringExtra("prkNm");
-        prkEnd = getIntent().getStringExtra("prkEnd");
+        review = (Review) getIntent().getSerializableExtra("review");
 
         SharedPreferences sp = getApplication().getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
         accessToken = sp.getString(Config.SP_KEY_ACCESS_TOKEN, "");
+
+        reviewId = review.getId();
+        prkId = review.getPrk_id();
 
         txtPrkNm = findViewById(R.id.txtPrkNm);
         txtEnd = findViewById(R.id.txtEnd);
@@ -65,38 +67,40 @@ public class ReviewAddActivity extends AppCompatActivity {
         txtContent = findViewById(R.id.txtContent);
         btnSave = findViewById(R.id.btnSave);
 
-        txtPrkNm.setText(prkNm);
-        txtEnd.setText(prkEnd.replace("T", " ").substring(0, 16));
+        txtPrkNm.setText(review.getPrk_plce_nm());
+        txtEnd.setText(review.getEnd_prk().replace("T", " ").substring(0, 16));
+        ratingBar.setRating(review.getRating());
+        txtContent.setText(review.getContent());
+
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Retrofit retrofit = NetworkClient.getRetrofitClient(ReviewEditActivity.this, Config.PP_BASE_URL);
+                ApiReviewActivity api = retrofit.create(ApiReviewActivity.class);
+
                 rating = ratingBar.getRating();
 
                 if (rating == 0) {
-                    Toast.makeText(ReviewAddActivity.this, "별점은 최소 1점 이상 입력해주세요.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ReviewEditActivity.this, "별점은 최소 1점 이상 입력해주세요.", Toast.LENGTH_LONG).show();
                     return;
                 }
-
-                Retrofit retrofit = NetworkClient.getRetrofitClient(ReviewAddActivity.this, Config.PP_BASE_URL);
-                ApiReviewActivity api = retrofit.create(ApiReviewActivity.class);
-
 
                 if (!txtContent.getText().toString().isEmpty()) {
                     content = txtContent.getText().toString();
                 }
 
-                Review reviewAdd = new Review(prkId, rating, content);
-                reviewAdd.setPrk_id(prkId);
-                reviewAdd.setRating(rating);
-                reviewAdd.setContent(content);
+                Review reviewUpdate = new Review(rating, content);
+                reviewUpdate.setRating(rating);
+                reviewUpdate.setContent(content);
+                Log.i("content:::", "ReviewActivity Content ===============" + content);
 
-                Call<PostRes> call = api.review("Bearer " + accessToken, reviewAdd);
+                Call<PostRes> call = api.updateReview("Bearer " + accessToken, reviewId, reviewUpdate);
                 call.enqueue(new Callback<PostRes>() {
                     @Override
                     public void onResponse(Call<PostRes> call, Response<PostRes> response) {
                         if (response.isSuccessful()) {
-                            Intent intent = new Intent(ReviewAddActivity.this, MypageActivity.class);
+                            Intent intent = new Intent(ReviewEditActivity.this, MypageActivity.class);
                             startActivity(intent);
                             finish();
                         }
@@ -110,12 +114,13 @@ public class ReviewAddActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
 
         if(itemId == android.R.id.home) {
-            Intent intent = new Intent(ReviewAddActivity.this, MypageActivity.class);
+            Intent intent = new Intent(ReviewEditActivity.this, MypageActivity.class);
             startActivity(intent);
             finish();
         }

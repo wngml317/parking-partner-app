@@ -33,7 +33,7 @@
             android:required="false" />
 
         <activity
-            android:name=".ui.ReviewActivity"
+            android:name=".ui.ReviewEditActivity"
             android:exported="false" />
         <activity
             android:name=".ui.MypageActivity"

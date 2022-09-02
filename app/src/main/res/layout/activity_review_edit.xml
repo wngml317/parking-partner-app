@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.ReviewActivity">
+    tools:context=".ui.ReviewEditActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -84,7 +84,7 @@
             android:layout_marginBottom="30dp"
             android:background="@drawable/btn_disable_shape"
             android:gravity="center"
-            android:text="리뷰 작성"
+            android:text="리뷰 수정"
             android:textColor="@color/white"
             android:textSize="20sp" />
 

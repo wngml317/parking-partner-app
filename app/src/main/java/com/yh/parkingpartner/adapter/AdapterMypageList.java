@@ -18,7 +18,7 @@ import com.bumptech.glide.Glide;
 import com.yh.parkingpartner.R;
 import com.yh.parkingpartner.model.Review;
 import com.yh.parkingpartner.ui.MypageActivity;
-import com.yh.parkingpartner.ui.ReviewActivity;
+import com.yh.parkingpartner.ui.ReviewEditActivity;
 import com.yh.parkingpartner.ui.ReviewAddActivity;
 
 import java.util.List;
@@ -119,7 +119,7 @@ public class AdapterMypageList extends RecyclerView.Adapter<AdapterMypageList.Vi
                         int index = getAdapterPosition();
                         Review review = reviewList.get(index);
 
-                        Intent intent = new Intent(context, ReviewActivity.class);
+                        Intent intent = new Intent(context, ReviewEditActivity.class);
                         intent.putExtra("review", review);
                         ((MypageActivity)context).finish();
                         context.startActivity(intent);
