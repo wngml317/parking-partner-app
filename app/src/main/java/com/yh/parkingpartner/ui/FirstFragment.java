@@ -45,6 +45,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.skt.Tmap.TMapTapi;
 import com.yh.parkingpartner.R;
 import com.yh.parkingpartner.api.ApiFirstFragment;
 import com.yh.parkingpartner.api.NetworkClient;
@@ -137,7 +138,7 @@ public class FirstFragment extends Fragment
         readSharedPreferences();
 
         mainActivity = (MainActivity) getActivity();
-        mainActivity.getSupportActionBar().setTitle("");
+        mainActivity.getSupportActionBar().setTitle(R.string.MY_POSITION_ARROUND);
         blnCreatedView=false;
         skTmapApp=new SkTmapApp(getContext());
 
@@ -241,9 +242,8 @@ public class FirstFragment extends Fragment
 
                 txtRadius.setText(String.valueOf(radius / 1000.0));
                 writeSharedPreferences();
-                radiusSelector.setVisibility(View.GONE);
 
-                if(mainActivity.getSupportActionBar().getTitle().toString().equals("현 위치 주변")){
+                if(mainActivity.getSupportActionBar().getTitle().toString().equals(getString(R.string.MY_POSITION_ARROUND))){
                     getNetworkData(Util.MAP_MY_ARROUND, null, null, null);
                 } else {
                     getNetworkData(Util.MAP_DESTINATION_ARROUND, googleLibPlacesApiData, googleTextSearchApiData, null);
@@ -287,7 +287,7 @@ public class FirstFragment extends Fragment
                 // 목록보기 액티비티 호출
                 Intent intent=new Intent(getContext(), ParkListActivity.class);
                 intent.putExtra("title", mainActivity.getSupportActionBar().getTitle());
-                if(mainActivity.getSupportActionBar().getTitle().toString().equals("현 위치 주변")){
+                if(mainActivity.getSupportActionBar().getTitle().toString().equals(getString(R.string.MY_POSITION_ARROUND))){
                     intent.putExtra("latitude", nowLatitude);
                     intent.putExtra("longitude", nowLongitude);
                 } else {
@@ -352,16 +352,17 @@ public class FirstFragment extends Fragment
                 alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        if(skTmapApp.isAuthentication()){
+                        //인증 콜백이 안 터짐... 고로.. 인증 확인 제거...
+//                        if(skTmapApp.isAuthentication()){
                             if(skTmapApp.checkTmapApplicationInstalled()){
                                 //skTmapApp.searchProtal(prk_plce_nm.getText().toString());
                                 skTmapApp.searchRoute(nowLatitude, nowLongitude, dataList.get(markerSelectedIndex));
                             }else{
                                 skTmapApp.tmapInstall();
                             }
-                        }else{
-                            Toast.makeText(getContext(), "TMap 인증되지 않았습니다.", Toast.LENGTH_LONG).show();
-                        }
+//                        }else{
+//                            Toast.makeText(getContext(), "TMap 인증되지 않았습니다.", Toast.LENGTH_LONG).show();
+//                        }
                     }
                 });
                 alert.setNegativeButton("No", null);
@@ -414,7 +415,6 @@ public class FirstFragment extends Fragment
                 getNetworkData(Util.MAP_DESTINATION_ARROUND, googleLibPlacesApiData, null, null);
 
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
-                // TODO: Handle the error.
                 Status status = Autocomplete.getStatusFromIntent(data);
                 Log.i("로그", "RESULT_ERROR Msg : "+status.getStatusMessage());
             } else if (resultCode == AutocompleteActivity.RESULT_CANCELED) {
@@ -492,8 +492,11 @@ public class FirstFragment extends Fragment
             , @Nullable Data parkingonepick) {
 
         cardView.setVisibility(View.GONE);
+        radiusSelector.setVisibility(View.GONE);
+        googleMap.clear();
 
         if(pApiGbn==Util.MAP_MY_ARROUND) {
+            mainActivity.getSupportActionBar().setTitle(R.string.MY_POSITION_ARROUND);
             orgLatitude = nowLatitude;
             orgLongitude = nowLongitude;
             if (orgLatitude == 0 || orgLongitude == 0) {
@@ -501,9 +504,11 @@ public class FirstFragment extends Fragment
             }
         } else if(pApiGbn==Util.MAP_DESTINATION_ARROUND) {
             if(destination!=null) {
+                mainActivity.getSupportActionBar().setTitle(destination.getName() + getString(R.string.ARROUND));
                 orgLatitude = destination.getLatLng().latitude;
                 orgLongitude = destination.getLatLng().longitude;
             }else if(pdestination!=null){
+                mainActivity.getSupportActionBar().setTitle(pdestination.getName() + getString(R.string.ARROUND));
                 orgLatitude = pdestination.getGeometry().getLocation().getLat();
                 orgLongitude = pdestination.getGeometry().getLocation().getLng();
             }
@@ -538,7 +543,7 @@ public class FirstFragment extends Fragment
                 if(response.isSuccessful()) {
                     DataListRes dataListRes=response.body();
                     if (dataListRes.getResult().equals("success")) {
-                        Toast.makeText(getContext(), dataListRes.getCount()+"개의 주차장 정보 수신 완료.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), dataListRes.getCount()+"개의 주차장 정보 수신 완료.", Toast.LENGTH_SHORT).show();
                         dataList=(ArrayList<Data>) dataListRes.getItems();
                         setMarker(pApiGbn, orgLatitude, orgLongitude, destination, pdestination, parkingonepick);
                     }
@@ -584,25 +589,15 @@ public class FirstFragment extends Fragment
 
         showProgress("지도에 표시 중...");
 
-        if(pApiGbn==Util.MAP_MY_ARROUND) {
-            googleMap.clear();
-            mainActivity.getSupportActionBar().setTitle("현 위치 주변");
-            orgLoc=new LatLng(pLatitude, pLongitude);
-            marker=googleMap.addMarker(new MarkerOptions().position(orgLoc));
+        googleMap.clear();
+        orgLoc=new LatLng(pLatitude, pLongitude);
+        marker=googleMap.addMarker(new MarkerOptions().position(orgLoc));
 
+        if(pApiGbn==Util.MAP_MY_ARROUND) {
             marker.setTag(-1);
-            marker.setTitle("현 위치");
+            marker.setTitle(getString(R.string.MY_POSITION));
             marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
         } else if(pApiGbn==Util.MAP_DESTINATION_ARROUND){
-            googleMap.clear();
-            if(destination!=null) {
-                mainActivity.getSupportActionBar().setTitle(destination.getName() + " 주변");
-            } else {
-                mainActivity.getSupportActionBar().setTitle(pdestination.getName() + " 주변");
-            }
-            orgLoc=new LatLng(pLatitude, pLongitude);
-            marker=googleMap.addMarker(new MarkerOptions().position(orgLoc));
-
             marker.setTag(-1);
             if(destination!=null) {
                 marker.setTitle(destination.getName());
@@ -613,11 +608,6 @@ public class FirstFragment extends Fragment
             }
             marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
         } else if(pApiGbn==Util.MAP_ONE_PICK){
-            googleMap.clear();
-//            mainActivity.getSupportActionBar().setTitle("주차장명");
-            orgLoc=new LatLng(pLatitude, pLongitude);
-            marker=googleMap.addMarker(new MarkerOptions().position(orgLoc));
-
             marker.setTag(0);
             marker.setTitle(parkingonepick.getPrk_plce_nm());
             marker.setSnippet(parkingonepick.getPrk_plce_adres());
@@ -648,22 +638,21 @@ public class FirstFragment extends Fragment
             circle.setRadius(radius);
             circle.setStrokeWidth(3.0f);
         }
-
-        if(radius==100) {
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(orgLoc, 20));
-        } else if(radius==200) {
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(orgLoc, 15));
-        }else if(radius==300) {
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(orgLoc, 15));
-        }else if(radius==500) {
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(orgLoc, 15));
-        }else if(radius==700) {
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(orgLoc, 15));
-        }else {
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(orgLoc, 15));
-        }
-
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(orgLoc, getZoomLevel(circle)));
         dismissProgress();
+    }
+
+    private float getZoomLevel(Circle circle) {
+        float zoomLevel;
+        if(circle!=null) {
+            double radius = circle.getRadius();
+            double scale = radius / 300;
+            zoomLevel = (float) (16 - Math.log(scale) / Math.log(2));
+        }else{
+            zoomLevel=18;
+        }
+        Log.i("로그", "반경 : "+radius+", 줌레벨 : "+zoomLevel);
+        return zoomLevel;
     }
 
     //프로그래스다이얼로그 표시

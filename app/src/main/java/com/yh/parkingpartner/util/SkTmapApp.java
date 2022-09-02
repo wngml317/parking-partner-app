@@ -2,6 +2,8 @@ package com.yh.parkingpartner.util;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
+
 import com.skt.Tmap.TMapTapi;
 import com.yh.parkingpartner.config.Config;
 import com.yh.parkingpartner.model.Data;
@@ -26,13 +28,16 @@ public class SkTmapApp {
 
     public void setAuthentication(){
         tmaptapi.setSKTMapAuthentication (Config.TM_API_KEY);
+        Log.i("로그", "setSKTMapAuthentication");
         tmaptapi.setOnAuthenticationListener(new TMapTapi.OnAuthenticationListenerCallback() {
             @Override
             public void SKTMapApikeySucceed() {
+                Log.i("로그", "SKTMapApikeySucceed");
                 isAuthentication=true;
             }
             @Override
             public void SKTMapApikeyFailed(String s) {
+                Log.i("로그", "SKTMapApikeyFailed");
                 isAuthentication=false;
             }
         });

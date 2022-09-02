@@ -10,7 +10,7 @@ public class Config {
     public static final String PP_BASE_URL="http://10.0.2.2:5000";
 
     //SKTmapAPI
-    public static final String TM_API_KEY="l7xx0aa51a311ad44a6cbac051cdcd05dcdb";
+    public static final String TM_API_KEY="l7xx20fe06f126e4489bb97ce442c501b8c5";
 
     //SharedPreferences
     // 저장소명
