@@ -71,7 +71,7 @@ public class AdapterMypageList extends RecyclerView.Adapter<AdapterMypageList.Vi
 
         Glide.with(context).load(review.getImg_prk()).placeholder(R.drawable.ic_baseline_photo_camera_back_24).into(holder.imgPrk);
 
-        if (review.getRating() == 0 && review.getId() == 0) {
+        if (review.getRating() == 0) {
             holder.btnReview.setText("리뷰 작성");
         } else {
             holder.btnReview.setText("리뷰 수정");
