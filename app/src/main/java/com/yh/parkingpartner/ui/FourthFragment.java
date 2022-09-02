@@ -270,17 +270,6 @@ public class FourthFragment extends Fragment {
                 if (response.isSuccessful()){
                     DataListRes dataListRes=response.body();
                     if (dataListRes.getResult().equals("success")){
-                        SharedPreferences sp = getActivity().getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sp.edit();
-                        editor.putInt("prk_id", 0);
-                        editor.putInt("push_prk_id",0);
-                        Log.i("로그", "결과 : " + editor.putInt("prk_id", 0));
-                        Log.i("로그", "결과 : " + editor.putInt("push_prk_id",0));
-                        editor.apply();
-
-                        prkId = sp.getInt(Config.SP_KEY_PRK_ID, 0);
-                        pushprkId = sp.getInt(Config.SP_KEY_PUSH_PRK_ID, 0);
-
                         android.app.AlertDialog.Builder alert=new android.app.AlertDialog.Builder(getContext());
                         if(data.getPrk_id()==0){
                             alert.setTitle("출차가 완료되었습니다.");
@@ -294,12 +283,32 @@ public class FourthFragment extends Fragment {
                                 intent.putExtra("prkNm",dataList.get(0).getPrk_plce_nm());
                                 intent.putExtra("prkEnd",dataListRes.getItems().get(0).getEnd_prk());
                                 Log.i("로그", "결과 : " + dataListRes.getItems().get(0).getEnd_prk());
+                                SharedPreferences sp = getActivity().getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sp.edit();
+                                editor.putInt("prk_id", 0);
+                                editor.putInt("push_prk_id",0);
+                                Log.i("로그", "결과 : " + editor.putInt("prk_id", 0));
+                                Log.i("로그", "결과 : " + editor.putInt("push_prk_id",0));
+                                editor.apply();
+
+                                prkId = sp.getInt(Config.SP_KEY_PRK_ID, 0);
+                                pushprkId = sp.getInt(Config.SP_KEY_PUSH_PRK_ID, 0);
                                 startActivity(intent);
                             }
                         });
                         alert.setNegativeButton("No",new DialogInterface.OnClickListener(){
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i){
+                                SharedPreferences sp = getActivity().getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sp.edit();
+                                editor.putInt("prk_id", 0);
+                                editor.putInt("push_prk_id",0);
+                                Log.i("로그", "결과 : " + editor.putInt("prk_id", 0));
+                                Log.i("로그", "결과 : " + editor.putInt("push_prk_id",0));
+                                editor.apply();
+
+                                prkId = sp.getInt(Config.SP_KEY_PRK_ID, 0);
+                                pushprkId = sp.getInt(Config.SP_KEY_PUSH_PRK_ID, 0);
                                 Log.i("로그", "결과 : 성공 " );
                                 mainActivity.changeFragment(R.id.firstFragment, firstFragment);
                             }
