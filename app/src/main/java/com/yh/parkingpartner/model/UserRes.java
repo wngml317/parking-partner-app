@@ -2,7 +2,7 @@ package com.yh.parkingpartner.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class UserRes {
+public class UserRes extends Data{
 
     private String result;
     @SerializedName("access_token")

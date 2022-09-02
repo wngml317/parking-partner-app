@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -34,6 +35,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -89,10 +92,23 @@ public class FirstFragment extends Fragment
 
     boolean blnCreatedView;
     ArrayList<Data> dataList=null;
+    Place googleLibPlacesApiData;
+    com.yh.parkingpartner.model.Place googleTextSearchApiData;
 
     ImageView imgMyLoc;
     ImageView imgListView;
     ImageView imgDestinationSerarch;
+
+    ImageView imgRadius;
+    TextView txtRadius;
+    LinearLayout radiusSelector;
+    Button btnRadius100;
+    Button btnRadius200;
+    Button btnRadius300;
+    Button btnRadius500;
+    Button btnRadius700;
+    Button btnRadius1000;
+    int radius;
 
     LinearLayout cardView;
     Button btnTmap;
@@ -117,6 +133,8 @@ public class FirstFragment extends Fragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        readSharedPreferences();
 
         mainActivity = (MainActivity) getActivity();
         mainActivity.getSupportActionBar().setTitle("");
@@ -194,6 +212,52 @@ public class FirstFragment extends Fragment
         imgListView = rootView.findViewById(R.id.imgListView);
         imgDestinationSerarch = rootView.findViewById(R.id.imgDestinationSerarch);
 
+        imgRadius= rootView.findViewById(R.id.imgRadius);
+        txtRadius= rootView.findViewById(R.id.txtRadius);
+        radiusSelector= rootView.findViewById(R.id.radiusSelector);
+        btnRadius100= rootView.findViewById(R.id.btnRadius100);
+        btnRadius200= rootView.findViewById(R.id.btnRadius200);
+        btnRadius300= rootView.findViewById(R.id.btnRadius300);
+        btnRadius500= rootView.findViewById(R.id.btnRadius500);
+        btnRadius700= rootView.findViewById(R.id.btnRadius700);
+        btnRadius1000= rootView.findViewById(R.id.btnRadius1000);
+
+        View.OnClickListener onRadiusClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(view.getId()==R.id.btnRadius100){
+                    radius=100;
+                }else if(view.getId()==R.id.btnRadius200){
+                    radius=200;
+                }else if(view.getId()==R.id.btnRadius300){
+                    radius=300;
+                }else if(view.getId()==R.id.btnRadius500){
+                    radius=500;
+                }else if(view.getId()==R.id.btnRadius700){
+                    radius=700;
+                }else{
+                    radius=1000;
+                }
+
+                txtRadius.setText(String.valueOf(radius / 1000.0));
+                writeSharedPreferences();
+                radiusSelector.setVisibility(View.GONE);
+
+                if(mainActivity.getSupportActionBar().getTitle().toString().equals("현 위치 주변")){
+                    getNetworkData(Util.MAP_MY_ARROUND, null, null, null);
+                } else {
+                    getNetworkData(Util.MAP_DESTINATION_ARROUND, googleLibPlacesApiData, googleTextSearchApiData, null);
+                }
+            }
+        };
+
+        btnRadius100.setOnClickListener(onRadiusClickListener);
+        btnRadius200.setOnClickListener(onRadiusClickListener);
+        btnRadius300.setOnClickListener(onRadiusClickListener);
+        btnRadius500.setOnClickListener(onRadiusClickListener);
+        btnRadius700.setOnClickListener(onRadiusClickListener);
+        btnRadius1000.setOnClickListener(onRadiusClickListener);
+
         cardView = rootView.findViewById(R.id.cardView);
         btnTmap = rootView.findViewById(R.id.btnTmap);
         imgClose = rootView.findViewById(R.id.imgClose);
@@ -213,7 +277,6 @@ public class FirstFragment extends Fragment
         imgMyLoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cardView.setVisibility(View.GONE);
                 getNetworkData(Util.MAP_MY_ARROUND, null, null, null);
             }
         });
@@ -257,6 +320,17 @@ public class FirstFragment extends Fragment
                         .setHint("목적지 검색")
                         .build(getContext());
                 startActivityForResult(intent, Util.AUTOCOMPLETE_REQUEST_CODE);
+            }
+        });
+
+        imgRadius.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(radiusSelector.getVisibility()==View.GONE) {
+                    radiusSelector.setVisibility(View.VISIBLE);
+                }else{
+                    radiusSelector.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -304,20 +378,40 @@ public class FirstFragment extends Fragment
         return rootView;
     }
 
+    //mapview 설정
+    private void initMapview(Bundle savedInstanceState) {
+        mapView.onCreate(savedInstanceState);
+        mapView.onResume();
+        mapView.getMapAsync(this);
+        cardView.setVisibility(View.GONE);
+        txtRadius.setText(String.valueOf(radius / 1000.0));
+        radiusSelector.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onMapReady(final GoogleMap googleMap) {
+        this.googleMap=googleMap;
+//        //지도타입
+        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+////        googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        //마커클릭 리스너 셋팅
+        googleMap.setOnMarkerClickListener(this);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == Util.AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == AutocompleteActivity.RESULT_OK) {
-                Place place = Autocomplete.getPlaceFromIntent(data);
+                googleLibPlacesApiData = Autocomplete.getPlaceFromIntent(data);
                 Log.i("로그", "RESULT_OK Place : "
-                        + place.getName()
-                        + ", "+ place.getAddress()
-                        + ", "+ place.getPhoneNumber()
-                        + ", "+ place.getLatLng().latitude
-                        + ", "+ place.getLatLng().longitude
+                        + googleLibPlacesApiData.getName()
+                        + ", "+ googleLibPlacesApiData.getAddress()
+                        + ", "+ googleLibPlacesApiData.getPhoneNumber()
+                        + ", "+ googleLibPlacesApiData.getLatLng().latitude
+                        + ", "+ googleLibPlacesApiData.getLatLng().longitude
                 );
 
-                getNetworkData(Util.MAP_DESTINATION_ARROUND, place, null, null);
+                getNetworkData(Util.MAP_DESTINATION_ARROUND, googleLibPlacesApiData, null, null);
 
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
                 // TODO: Handle the error.
@@ -332,13 +426,13 @@ public class FirstFragment extends Fragment
             Log.i("로그", "SEARCH_ACTIVITY_REQUEST_RETURN");
             if (resultCode == Activity.RESULT_OK) {
                 Log.i("로그", "RESULT_OK");
-                com.yh.parkingpartner.model.Place place= (com.yh.parkingpartner.model.Place) data.getSerializableExtra("destination");
-                Log.i("로그", place.getName());
-                Log.i("로그", place.getFormatted_address());
-                Log.i("로그", "위도 : "+place.getGeometry().getLocation().getLat());
-                Log.i("로그", "경도 : "+place.getGeometry().getLocation().getLng());
+                googleTextSearchApiData= (com.yh.parkingpartner.model.Place) data.getSerializableExtra("destination");
+                Log.i("로그", googleTextSearchApiData.getName());
+                Log.i("로그", googleTextSearchApiData.getFormatted_address());
+                Log.i("로그", "위도 : "+googleTextSearchApiData.getGeometry().getLocation().getLat());
+                Log.i("로그", "경도 : "+googleTextSearchApiData.getGeometry().getLocation().getLng());
 
-                getNetworkData(Util.MAP_DESTINATION_ARROUND, null, place, null);
+                getNetworkData(Util.MAP_DESTINATION_ARROUND, null, googleTextSearchApiData, null);
 
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Log.i("로그", "RESULT_CANCELED");
@@ -363,24 +457,6 @@ public class FirstFragment extends Fragment
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    //mapview 설정
-    private void initMapview(Bundle savedInstanceState) {
-        mapView.onCreate(savedInstanceState);
-        mapView.onResume();
-        mapView.getMapAsync(this);
-        cardView.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onMapReady(final GoogleMap googleMap) {
-        this.googleMap=googleMap;
-//        //지도타입
-        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-////        googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        //마커클릭 리스너 셋팅
-        googleMap.setOnMarkerClickListener(this);
     }
 
     @Override
@@ -450,6 +526,7 @@ public class FirstFragment extends Fragment
         //db에 위도, 경도 데이터가 바뀌어서 임시로...
         params.put("lat", orgLatitude);
         params.put("log", orgLongitude);
+        params.put("radius", radius);
 
         Call<DataListRes> call = api.aroundParkingLot(params);
         call.enqueue(new Callback<DataListRes>() {
@@ -502,6 +579,7 @@ public class FirstFragment extends Fragment
             , @Nullable Data parkingonepick) {
 
         Marker marker=null;
+        Circle circle=null;
         LatLng orgLoc=null;
 
         showProgress("지도에 표시 중...");
@@ -565,8 +643,25 @@ public class FirstFragment extends Fragment
                 marker.setSnippet(data.getPrk_plce_adres());
                 marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
             }
+
+            circle=googleMap.addCircle(new CircleOptions().center(orgLoc));
+            circle.setRadius(radius);
+            circle.setStrokeWidth(3.0f);
         }
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(orgLoc, 15));
+
+        if(radius==100) {
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(orgLoc, 20));
+        } else if(radius==200) {
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(orgLoc, 15));
+        }else if(radius==300) {
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(orgLoc, 15));
+        }else if(radius==500) {
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(orgLoc, 15));
+        }else if(radius==700) {
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(orgLoc, 15));
+        }else {
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(orgLoc, 15));
+        }
 
         dismissProgress();
     }
@@ -582,4 +677,22 @@ public class FirstFragment extends Fragment
     void dismissProgress(){
         progressDialog.dismiss();
     }
+
+    void readSharedPreferences(){
+        //SharedPreferences 를 이용해서, 앱 내의 저장소에 영구저장된 데이터를 읽어오는 방법
+        SharedPreferences sp = getActivity().getSharedPreferences(Config.SP_NAME, getActivity().MODE_PRIVATE);
+        radius = sp.getInt(Config.SP_KEY_DEFAULT_RADIUS, 500);
+    }
+
+    void writeSharedPreferences(){
+        //SharedPreferences 를 이용해서, 앱 내의 저장소에 영구저장된 데이터를 읽어오는 방법
+        SharedPreferences sp = getActivity().getSharedPreferences(Config.SP_NAME, getActivity().MODE_PRIVATE);
+        //편집기를 만든다.
+        SharedPreferences.Editor editor = sp.edit();
+        //작성한다.
+        editor.putInt(Config.SP_KEY_DEFAULT_RADIUS, radius);
+        //저장한다.
+        editor.apply();
+    }
+
 }

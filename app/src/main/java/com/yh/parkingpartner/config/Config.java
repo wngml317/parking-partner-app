@@ -48,4 +48,7 @@ public class Config {
     // parking_chrge_one_day_chrge-1일요금
     public static final String SP_KEY_PARKING_CHRGE_ONE_DAY_CHRGE="parking_chrge_one_day_chrge";
 
+    // 주차장 지도표시 검색 반경 KEY명
+    public static final String SP_KEY_DEFAULT_RADIUS="default_radius";
+
 }

@@ -44,7 +44,7 @@ public class NotificationUtil extends BroadcastReceiver {
         //todo : 주차완료 정보 확인하여 입차시간 기준 설정한 분 경과 단위로 알림을 출력한다.
         //Util.NOTIFICATION_USE_PRK_AT_INTERVAL = 입차시간 기준 경과 단위
         readSharedPreferences(context);
-        if(data.getPrk_id()==0){
+        if(data.getPush_prk_id()==0){
             Log.i("로그", "NotificationUtil.onReceive 주차완료 정보 없음");
             return;
         }
@@ -98,6 +98,7 @@ public class NotificationUtil extends BroadcastReceiver {
                         .addLine("주차장명 : "+data.getPrk_plce_nm())
                         .addLine("현재시간 : "+Util.getNowDateTime())
                         .addLine("입차시간 : "+data.getStart_prk_at())
+                        .addLine("주차구역 : "+data.getPrk_area())
                         .addLine("주차 후 "+Util.myDecFormatter.format(diffMin)+"분이 경과되었습니다.")
                         .addLine("확인하시려면 탭하세요."))
                 .setContentIntent(pendingIntent);
@@ -118,12 +119,12 @@ public class NotificationUtil extends BroadcastReceiver {
         // 주차완료정보 관련
         // prk_id-주차ID
         data.setPrk_id(sp.getInt(Config.SP_KEY_PRK_ID, 0));
+        // push_prk_id-푸쉬알림용 최종 주차ID
+        data.setPush_prk_id(sp.getInt(Config.SP_KEY_PUSH_PRK_ID, 0));
         //prk_center_id-주차장ID
         data.setPrk_center_id(sp.getString(Config.SP_KEY_PRK_CENTER_ID, ""));
-        Log.i("로그", "getPrk_center_id : "+data.getPrk_center_id());
         //prk_plce_nm-주차장명
         data.setPrk_plce_nm(sp.getString(Config.SP_KEY_PRK_PLCE_NM, ""));
-        Log.i("로그", "getPrk_plce_nm : "+data.getPrk_plce_nm());
         //prk_plce_adres-주차장주소
         data.setPrk_plce_adres(sp.getString(Config.SP_KEY_PRK_PLCE_ADRES, ""));
         // start_prk_at-입차시간
