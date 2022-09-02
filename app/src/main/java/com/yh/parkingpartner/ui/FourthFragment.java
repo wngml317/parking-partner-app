@@ -1,5 +1,7 @@
 package com.yh.parkingpartner.ui;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -55,6 +57,7 @@ public class FourthFragment extends Fragment {
     Button btnCheckPay;
     Button btnEndParking;
     int prkId;
+    int pushprkId;
     int count = 0;
     DataListRes dataListRes;
     String[] time;
@@ -185,7 +188,10 @@ public class FourthFragment extends Fragment {
         //SharedPref소erences 를 이용해서, 앱 내의 저장에 영구저장된 데이터를 읽어오는 방법
         SharedPreferences sp = getActivity().getSharedPreferences(Config.SP_NAME, getActivity().MODE_PRIVATE);
         prkId = sp.getInt(Config.SP_KEY_PRK_ID,0);
+        pushprkId = sp.getInt(Config.SP_KEY_PUSH_PRK_ID, 0);
         Log.i("로그", "prk_id : " + prkId);
+        Log.i("로그", "prk_id : " + pushprkId);
+
 
     }
 
@@ -262,7 +268,17 @@ public class FourthFragment extends Fragment {
                 if (response.isSuccessful()){
                     DataListRes dataListRes=response.body();
                     if (dataListRes.getResult().equals("success")){
-                        ReadSharedPreferences();
+                        SharedPreferences sp = getActivity().getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putInt("prk_id", 0);
+                        editor.putInt("push_prk_id",0);
+                        Log.i("로그", "결과 : " + editor.putInt("prk_id", 0));
+                        Log.i("로그", "결과 : " + editor.putInt("push_prk_id",0));
+                        editor.apply();
+
+                        prkId = sp.getInt(Config.SP_KEY_PRK_ID, 0);
+                        pushprkId = sp.getInt(Config.SP_KEY_PUSH_PRK_ID, 0);
+
                         android.app.AlertDialog.Builder alert=new android.app.AlertDialog.Builder(getContext());
                         if(data.getPrk_id()==0){
                             alert.setTitle("출차가 완료되었습니다.");
