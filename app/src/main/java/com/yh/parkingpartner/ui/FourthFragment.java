@@ -244,6 +244,26 @@ public class FourthFragment extends Fragment {
     // 데이터의 초기화도 필요하다.
     private void getNetworkData() {
 
+
+        if (prkId == 0) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+            alert.setTitle("주차 완료 정보 없음");
+            alert.setMessage("주차 완료 후, 사용해주세요.");
+            alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                    mainActivity.changeFragment(R.id.secondFragment, secondFragment);
+                }
+
+            });
+            //알러트 다이얼로그의 버튼을 안누르면, 화면이 넘어가지 않게..
+            alert.setCancelable(false);
+            alert.show();
+            return;
+        }
+
+
         dataList.clear();
         count = 1;
         Retrofit retrofit = NetworkClient.getRetrofitClient(getContext(),Config.PP_BASE_URL);
