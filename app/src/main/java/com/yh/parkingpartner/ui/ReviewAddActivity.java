@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -55,6 +56,11 @@ public class ReviewAddActivity extends AppCompatActivity {
         prkId = getIntent().getIntExtra("prkId", 0);
         prkNm = getIntent().getStringExtra("prkNm");
         prkEnd = getIntent().getStringExtra("prkEnd");
+
+        Log.i("로그: ", "=========ReviewAddActivity=========");
+        Log.i("로그: ", "prkId : " + prkId);
+        Log.i("로그: ", "prkNm : " + prkNm);
+        Log.i("로그: ", "prkEnd : " + prkEnd);
 
         SharedPreferences sp = getApplication().getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
         accessToken = sp.getString(Config.SP_KEY_ACCESS_TOKEN, "");
