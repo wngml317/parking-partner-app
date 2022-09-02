@@ -274,7 +274,8 @@ public class FourthFragment extends Fragment {
                                 Intent intent = new Intent(getActivity(), ReviewAddActivity.class);
                                 intent.putExtra("prkId",prkId);
                                 intent.putExtra("prkNm",dataList.get(0).getPrk_plce_nm());
-                                intent.putExtra("prkEnd",dataList.get(0).getEnd_prk());
+                                intent.putExtra("prkEnd",dataListRes.getItems().get(0).getEnd_prk());
+                                Log.i("로그", "결과 : " + dataListRes.getItems().get(0).getEnd_prk());
                                 startActivity(intent);
                             }
                         });
