@@ -124,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
                                 editor.putInt(Config.SP_KEY_PARKING_CHRGE_ADIT_UNIT_CHRGE, registerRes.getParking_chrge_adit_unit_chrge());
                                 editor.putInt(Config.SP_KEY_PARKING_CHRGE_ONE_DAY_CHRGE, registerRes.getParking_chrge_one_day_chrge());
                                 editor.putInt(Config.SP_KEY_PRK_ID,registerRes.getPrk_id());
-                                editor.putString(Config.SP_KEY_START_PRK_AT,registerRes.getStart_prk_at());
+                                editor.putString(Config.SP_KEY_START_PRK_AT,registerRes.getStart_prk_at().replace("T", " "));
                                 editor.putString(Config.SP_KEY_IMG_PAK,registerRes.getImg_prk());
                                 editor.putString(Config.SP_KEY_PRK_AREA,registerRes.getPrk_area());
 
