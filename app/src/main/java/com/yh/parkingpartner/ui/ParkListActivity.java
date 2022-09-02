@@ -93,9 +93,9 @@ public class ParkListActivity extends AppCompatActivity {
         accessToken = sp.getString(Config.SP_KEY_ACCESS_TOKEN, "");
 
 
-        btnDistance = findViewById(R.id.btnDistance);
-        btnCharge = findViewById(R.id.btnCharge);
-        btnSpot = findViewById(R.id.btnSpot);
+        btnDistance = (Button) findViewById(R.id.btnDistance);
+        btnCharge = (Button) findViewById(R.id.btnCharge);
+        btnSpot = (Button) findViewById(R.id.btnSpot);
 
 
         btnDistance.setOnClickListener(new View.OnClickListener() {

@@ -18,7 +18,8 @@ import com.bumptech.glide.Glide;
 import com.yh.parkingpartner.R;
 import com.yh.parkingpartner.model.Review;
 import com.yh.parkingpartner.ui.MypageActivity;
-import com.yh.parkingpartner.ui.ReviewActivity;
+import com.yh.parkingpartner.ui.ReviewEditActivity;
+import com.yh.parkingpartner.ui.ReviewAddActivity;
 
 import java.util.List;
 
@@ -59,12 +60,12 @@ public class AdapterMypageList extends RecyclerView.Adapter<AdapterMypageList.Vi
         holder.txtPay.setText("요금 ( " + review.getParking_chrge_bs_time() + "분 / " + review.getParking_chrge_bs_chrg() + "원 )");
         time = review.getUse_prk_at().split(":");
         if (time[0].equals("0") ) {
-            holder.txtUsePay.setText(" : "+time[1] + "분"+" / " + review.getEnd_pay() + "원");
+            holder.txtUsePay.setText(":  "+time[1] + "분"+" / " + review.getEnd_pay() + "원");
         } else {
             if (review.getUse_prk_at().contains("day")) {
-                holder.txtUsePay.setText(" : "+time[0] + "시간 " + time[1] + "분"+" / " + review.getEnd_pay() + "원");
+                holder.txtUsePay.setText(":  "+time[0] + "시간 " + time[1] + "분"+" / " + review.getEnd_pay() + "원");
             } else {
-                holder.txtUsePay.setText(" : "+time[0] + "시간 " + time[1] + "분"+" / " + review.getEnd_pay() + "원");
+                holder.txtUsePay.setText(":  "+time[0] + "시간 " + time[1] + "분"+" / " + review.getEnd_pay() + "원");
             }
         }
 
@@ -114,13 +115,25 @@ public class AdapterMypageList extends RecyclerView.Adapter<AdapterMypageList.Vi
             btnReview.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    int index = getAdapterPosition();
-                    Review review = reviewList.get(index);
+                    if (btnReview.getText().toString().equals("리뷰 수정")) {
+                        int index = getAdapterPosition();
+                        Review review = reviewList.get(index);
 
-                    Intent intent = new Intent(context, ReviewActivity.class);
-                    intent.putExtra("review", review);
-                    ((MypageActivity)context).finish();
-                    context.startActivity(intent);
+                        Intent intent = new Intent(context, ReviewEditActivity.class);
+                        intent.putExtra("review", review);
+                        ((MypageActivity)context).finish();
+                        context.startActivity(intent);
+                    } else if(btnReview.getText().toString().equals("리뷰 작성")) {
+                        int index = getAdapterPosition();
+                        Review review = reviewList.get(index);
+
+                        Intent intent = new Intent(context, ReviewAddActivity.class);
+                        intent.putExtra("prkId", review.getPrk_id());
+                        intent.putExtra("prkNm", review.getPrk_plce_nm());
+                        intent.putExtra("prkEnd", review.getEnd_prk());
+                        ((MypageActivity)context).finish();
+                        context.startActivity(intent);
+                    }
 
                 }
             });
