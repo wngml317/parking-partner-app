@@ -61,6 +61,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -147,13 +148,19 @@ public class FirstFragment extends Fragment
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
-
-                Log.i("로그", "onLocationChanged 위도 : " + location.getLatitude() + ", 경도 : " + location.getLongitude());
-
+//                Log.i("로그", "onLocationChanged 위도 : " + location.getLatitude() + ", 경도 : " + location.getLongitude());
                 nowLatitude=location.getLatitude();
                 nowLongitude=location.getLongitude();
 
-                if(googleMap!=null && blnCreatedView==false){
+                if(nowLatitude<=0){
+                    nowLatitude=0;
+                }
+
+                if(nowLongitude<=0){
+                    nowLongitude=0;
+                }
+
+                if(googleMap!=null && blnCreatedView==false && nowLatitude>0 && nowLongitude>0){
                     blnCreatedView=true;
                     dismissProgress();
                     getNetworkData(Util.MAP_MY_ARROUND, null, null, null);
@@ -198,6 +205,7 @@ public class FirstFragment extends Fragment
         showProgress("현재 GPS좌표를 수신 중입니다...");
         //3초간격 and 3미터이동(-1이면 사용하지 않음) 마다 위치정보 줘라..
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, -1, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, -1, locationListener);
     }
 
     //권한부여 결과처리
@@ -218,6 +226,7 @@ public class FirstFragment extends Fragment
                 return;
             } else {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, -1, locationListener);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, -1, locationListener);
             }
         }
     }
@@ -297,7 +306,28 @@ public class FirstFragment extends Fragment
         imgMyLoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getNetworkData(Util.MAP_MY_ARROUND, null, null, null);
+                if (nowLatitude <= 0 || nowLongitude <= 0) {
+                    Log.i("로그", "getLastKnownLocation 호출");
+                    Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    Log.i("로그", "getLastKnownLocation 위도 : " + location.getLatitude() + ", 경도 : " + location.getLongitude());
+
+                    nowLatitude = location.getLatitude();
+                    nowLongitude = location.getLongitude();
+                }
+
+                if (nowLatitude <= 0) {
+                    nowLatitude = 0;
+                }
+
+                if (nowLongitude <= 0) {
+                    nowLongitude = 0;
+                }
+
+                if (nowLatitude > 0 && nowLongitude > 0) {
+                    getNetworkData(Util.MAP_MY_ARROUND, null, null, null);
+                }else{
+                    Toast.makeText(getContext(), "현 GPS위치를 찾지 못했습니다.", Toast.LENGTH_LONG).show();
+                }
             }
         });
 

@@ -172,7 +172,15 @@ public class SecondFragment extends Fragment {
                 nowLatitude=location.getLatitude();
                 nowLongitude=location.getLongitude();
 
-                if(blnSearchParkingLot==false){
+                if(nowLatitude<=0){
+                    nowLatitude=0;
+                }
+
+                if(nowLongitude<=0){
+                    nowLongitude=0;
+                }
+
+                if(blnSearchParkingLot==false && nowLatitude>0 && nowLongitude>0){
                     blnSearchParkingLot=true;
                     dismissProgress();
                     getNetworkData(1);
@@ -198,6 +206,7 @@ public class SecondFragment extends Fragment {
 
         //3초간격 and 3미터이동(-1이면 사용하지 않음) 마다 위치정보 줘라..
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, -1, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, -1, locationListener);
 
     }
 
@@ -219,6 +228,7 @@ public class SecondFragment extends Fragment {
                 return;
             } else {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, -1, locationListener);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, -1, locationListener);
             }
         } else if(requestCode==1000) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

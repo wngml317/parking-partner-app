@@ -9,8 +9,8 @@ public class Config {
 
     //파킹파트너API
 //    public static final String PP_BASE_URL="aws endpoint";
-    public static final String PP_BASE_URL="http://10.0.2.2:5000";
-//    public static final String PP_BASE_URL="http://192.168.0.55:5000";
+//    public static final String PP_BASE_URL="http://10.0.2.2:5000";
+    public static final String PP_BASE_URL="http://192.168.0.56:5000";
 
     //SKTmapAPI
     public static final String TM_API_KEY="l7xx20fe06f126e4489bb97ce442c501b8c5";
