@@ -52,7 +52,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_margin="30dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"
                 android:numStars="5"
                 android:progressTint="#FFC107"
                 android:rating="1"
@@ -64,12 +65,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
+                android:background="@drawable/border"
                 android:ems="10"
                 android:hint="리뷰를 작성해주세요."
-                android:padding="10dp"
-                android:background="@drawable/border"
                 android:inputType="textMultiLine"
-                android:maxLines="3" />
+                android:maxLines="3"
+                android:padding="10dp" />
 
         </LinearLayout>
 

@@ -76,6 +76,8 @@ public class ReviewEditActivity extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 Retrofit retrofit = NetworkClient.getRetrofitClient(ReviewEditActivity.this, Config.PP_BASE_URL);
                 ApiReviewActivity api = retrofit.create(ApiReviewActivity.class);
 
@@ -93,13 +95,15 @@ public class ReviewEditActivity extends AppCompatActivity {
                 Review reviewUpdate = new Review(rating, content);
                 reviewUpdate.setRating(rating);
                 reviewUpdate.setContent(content);
-                Log.i("content:::", "ReviewActivity Content ===============" + content);
 
                 Call<PostRes> call = api.updateReview("Bearer " + accessToken, reviewId, reviewUpdate);
                 call.enqueue(new Callback<PostRes>() {
                     @Override
                     public void onResponse(Call<PostRes> call, Response<PostRes> response) {
                         if (response.isSuccessful()) {
+
+                            Toast.makeText(ReviewEditActivity.this, "리뷰가 저장되었습니다.", Toast.LENGTH_LONG).show();
+
                             Intent intent = new Intent(ReviewEditActivity.this, MypageActivity.class);
                             startActivity(intent);
                             finish();
@@ -125,5 +129,13 @@ public class ReviewEditActivity extends AppCompatActivity {
             finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        // super.onBackPressed();
+        Intent intent = new Intent(ReviewEditActivity.this, MypageActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
