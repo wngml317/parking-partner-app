@@ -14,6 +14,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
@@ -45,6 +46,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -382,8 +384,7 @@ public class RegisterActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_UNDEFINED);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
             photo = rotateBitmap(photo, orientation);
 
             // 압축시킨다. 해상도 낮춰서
@@ -400,7 +401,7 @@ public class RegisterActivity extends AppCompatActivity {
             photo = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
 
             imgProfile.setImageBitmap(photo);
-            imgProfile.setScaleType(ImageView.ScaleType.FIT_XY);
+            //imgProfile.setScaleType(ImageView.ScaleType.FIT_XY);
 
         }else if(requestCode == 300 && resultCode == RESULT_OK && data != null && data.getData() != null){
 
@@ -427,8 +428,8 @@ public class RegisterActivity extends AppCompatActivity {
                     Log.e(getClass().getSimpleName(), "Error writing bitmap", e);
                 }
 
-                imgProfile.setImageBitmap(photo);
-                imgProfile.setScaleType(ImageView.ScaleType.FIT_XY);
+                imgProfile.setImageBitmap( getBitmapAlbum( imgProfile, albumUri ) );
+                //imgProfile.setScaleType(ImageView.ScaleType.FIT_XY);
 
             } catch ( Exception e ) {
                 e.printStackTrace( );
@@ -500,71 +501,71 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     //이미지뷰에 뿌려질 앨범 비트맵 반환
-//    public Bitmap getBitmapAlbum( View targetView, Uri uri ) {
-//        try {
-//            ParcelFileDescriptor parcelFileDescriptor = getContentResolver( ).openFileDescriptor( uri, "r" );
-//            if ( parcelFileDescriptor == null ) return null;
-//            FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor( );
-//            if ( fileDescriptor == null ) return null;
-//
-//            int targetW = targetView.getWidth( );
-//            int targetH = targetView.getHeight( );
-//
-//            BitmapFactory.Options options = new BitmapFactory.Options( );
-//            options.inJustDecodeBounds = true;
-//
-//            BitmapFactory.decodeFileDescriptor( fileDescriptor, null, options );
-//
-//            int photoW = options.outWidth;
-//            int photoH = options.outHeight;
-//
-//            int scaleFactor = Math.min( photoW / targetW, photoH / targetH );
-//            if ( scaleFactor >= 8 ) {
-//                options.inSampleSize = 8;
-//            } else if ( scaleFactor >= 4 ) {
-//                options.inSampleSize = 4;
-//            } else {
-//                options.inSampleSize = 2;
-//            }
-//            options.inJustDecodeBounds = false;
-//
-//            Bitmap reSizeBit = BitmapFactory.decodeFileDescriptor( fileDescriptor, null, options );
-//
-//            ExifInterface exifInterface = null;
-//            try {
-//                if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ) {
-//                    exifInterface = new ExifInterface( fileDescriptor );
-//                }
-//            } catch ( IOException e ) {
-//                e.printStackTrace( );
-//            }
-//
-//            int exifOrientation;
-//            int exifDegree = 0;
-//
-//            //사진 회전값 구하기
-//            if ( exifInterface != null ) {
-//                exifOrientation = exifInterface.getAttributeInt( ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL );
-//
-//                if ( exifOrientation == ExifInterface.ORIENTATION_ROTATE_90 ) {
-//                    exifDegree = 90;
-//                } else if ( exifOrientation == ExifInterface.ORIENTATION_ROTATE_180 ) {
-//                    exifDegree = 180;
-//                } else if ( exifOrientation == ExifInterface.ORIENTATION_ROTATE_270 ) {
-//                    exifDegree = 270;
-//                }
-//            }
-//
-//            parcelFileDescriptor.close( );
-//            Matrix matrix = new Matrix( );
-//            matrix.postRotate( exifDegree );
-//
-//            Bitmap reSizeExifBitmap = Bitmap.createBitmap( reSizeBit, 0, 0, reSizeBit.getWidth( ), reSizeBit.getHeight( ), matrix, true );
-//            return reSizeExifBitmap;
-//
-//        } catch ( Exception e ) {
-//            e.printStackTrace( );
-//            return null;
-//        }
-//    }
+    public Bitmap getBitmapAlbum( View targetView, Uri uri ) {
+        try {
+            ParcelFileDescriptor parcelFileDescriptor = getContentResolver( ).openFileDescriptor( uri, "r" );
+            if ( parcelFileDescriptor == null ) return null;
+            FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor( );
+            if ( fileDescriptor == null ) return null;
+
+            int targetW = targetView.getWidth( );
+            int targetH = targetView.getHeight( );
+
+            BitmapFactory.Options options = new BitmapFactory.Options( );
+            options.inJustDecodeBounds = true;
+
+            BitmapFactory.decodeFileDescriptor( fileDescriptor, null, options );
+
+            int photoW = options.outWidth;
+            int photoH = options.outHeight;
+
+            int scaleFactor = Math.min( photoW / targetW, photoH / targetH );
+            if ( scaleFactor >= 8 ) {
+                options.inSampleSize = 8;
+            } else if ( scaleFactor >= 4 ) {
+                options.inSampleSize = 4;
+            } else {
+                options.inSampleSize = 2;
+            }
+            options.inJustDecodeBounds = false;
+
+            Bitmap reSizeBit = BitmapFactory.decodeFileDescriptor( fileDescriptor, null, options );
+
+            ExifInterface exifInterface = null;
+            try {
+                if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ) {
+                    exifInterface = new ExifInterface( fileDescriptor );
+                }
+            } catch ( IOException e ) {
+                e.printStackTrace( );
+            }
+
+            int exifOrientation;
+            int exifDegree = 0;
+
+            //사진 회전값 구하기
+            if ( exifInterface != null ) {
+                exifOrientation = exifInterface.getAttributeInt( ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL );
+
+                if ( exifOrientation == ExifInterface.ORIENTATION_ROTATE_90 ) {
+                    exifDegree = 90;
+                } else if ( exifOrientation == ExifInterface.ORIENTATION_ROTATE_180 ) {
+                    exifDegree = 180;
+                } else if ( exifOrientation == ExifInterface.ORIENTATION_ROTATE_270 ) {
+                    exifDegree = 270;
+                }
+            }
+
+            parcelFileDescriptor.close( );
+            Matrix matrix = new Matrix( );
+            matrix.postRotate( exifDegree );
+
+            Bitmap reSizeExifBitmap = Bitmap.createBitmap( reSizeBit, 0, 0, reSizeBit.getWidth( ), reSizeBit.getHeight( ), matrix, true );
+            return reSizeExifBitmap;
+
+        } catch ( Exception e ) {
+            e.printStackTrace( );
+            return null;
+        }
+    }
 }

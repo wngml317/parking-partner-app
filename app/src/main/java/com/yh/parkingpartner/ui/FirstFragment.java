@@ -140,7 +140,7 @@ public class FirstFragment extends Fragment
 
         mainActivity = (MainActivity) getActivity();
         mainActivity.getSupportActionBar().setTitle(R.string.MY_POSITION_ARROUND);
-        blnCreatedView=false;
+        blnCreatedView=true;
         skTmapApp=new SkTmapApp(getContext());
 
         locationManager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
@@ -437,6 +437,7 @@ public class FirstFragment extends Fragment
         cardView.setVisibility(View.GONE);
         txtRadius.setText(String.valueOf(radius / 1000.0));
         radiusSelector.setVisibility(View.GONE);
+        blnCreatedView=false;
     }
 
     @Override
@@ -447,6 +448,11 @@ public class FirstFragment extends Fragment
 ////        googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         //마커클릭 리스너 셋팅
         googleMap.setOnMarkerClickListener(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override

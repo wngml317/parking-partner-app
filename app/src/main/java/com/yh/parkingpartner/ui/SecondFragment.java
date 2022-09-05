@@ -18,6 +18,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -50,13 +51,11 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.libraries.places.api.model.Place;
 import com.yh.parkingpartner.R;
-import com.yh.parkingpartner.api.ApiFirstFragment;
 import com.yh.parkingpartner.api.ApiSecondFragment;
 import com.yh.parkingpartner.api.NetworkClient;
 import com.yh.parkingpartner.config.Config;
 import com.yh.parkingpartner.model.Data;
 import com.yh.parkingpartner.model.DataListRes;
-import com.yh.parkingpartner.model.UserRes;
 import com.yh.parkingpartner.util.Util;
 
 import org.apache.commons.io.IOUtils;
@@ -64,12 +63,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -82,11 +81,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SecondFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class SecondFragment extends Fragment {
 
     MainActivity mainActivity;
@@ -104,6 +98,7 @@ public class SecondFragment extends Fragment {
     ProgressDialog progressDialog;
 
     boolean blnSearchParkingLot=true;
+    boolean blnOnCreateView=false;
     // 주차완료정보 관련
     Data data=new Data();
 
@@ -121,47 +116,15 @@ public class SecondFragment extends Fragment {
     //사진관련된 변수들
     private File photoFile;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public SecondFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SecondFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SecondFragment newInstance(String param1, String param2) {
-        SecondFragment fragment = new SecondFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
+        //SharedPreferences 를 읽어온다.
+        readSharedPreferences();
 
         mainActivity = (MainActivity) getActivity();
-        mainActivity.getSupportActionBar().setTitle("주차완료");
+        mainActivity.getSupportActionBar().setTitle("주차 완료");
 
         locationManager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
         //gps 로케이션 위치 받아오는 리스너
@@ -247,25 +210,16 @@ public class SecondFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_second, container, false);
+
+        blnOnCreateView=true;
 
         txtName = rootView.findViewById(R.id.txtName);
         txtAddr = rootView.findViewById(R.id.txtAddr);
         imgParking = rootView.findViewById(R.id.imgParking);
         etxtArea = rootView.findViewById(R.id.etxtArea);
         btnSave = rootView.findViewById(R.id.btnSave);
-
-        //SharedPreferences 를 읽어온다.
-        readSharedPreferences();
-        blnSearchParkingLot=(data.getPrk_id()==0 ? false : true);
-        if(!blnSearchParkingLot){
-            showProgress("현재 GPS좌표를 수신 중입니다...");
-        } else{
-            displayParkingLot();
-        }
 
         imgParking.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -287,21 +241,39 @@ public class SecondFragment extends Fragment {
             }
         });
 
+        blnSearchParkingLot=(data.getPrk_id()==0 ? false : true);
+        if(!blnSearchParkingLot){
+            showProgress("현재 GPS좌표를 수신 중입니다...");
+        }
         // Inflate the layout for this fragment
         return rootView;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(blnOnCreateView){
+            blnOnCreateView=false;
+            displayCreateViewParkingLot();
+        }
     }
 
     void readSharedPreferences(){
         //SharedPreferences 를 이용해서, 앱 내의 저장소에 영구저장된 데이터를 읽어오는 방법
         SharedPreferences sp = getActivity().getSharedPreferences(Config.SP_NAME, getActivity().MODE_PRIVATE);
         accessToken = sp.getString(Config.SP_KEY_ACCESS_TOKEN, "");
-        Log.i("로그", "accessToken : " + accessToken);
+//        Log.i("로그", "accessToken : " + accessToken);
         name = sp.getString(Config.SP_KEY_NAME, "");
-        Log.i("로그", "name : " + name);
+//        Log.i("로그", "name : " + name);
         email = sp.getString(Config.SP_KEY_EMAIL, "");
-        Log.i("로그", "email : " + email);
+//        Log.i("로그", "email : " + email);
         img_profile = sp.getString(Config.SP_KEY_IMG_PROFILE, "");
-        Log.i("로그", "img_profile : " + img_profile);
+//        Log.i("로그", "img_profile : " + img_profile);
 
         // 주차완료정보 관련
         // prk_id-주차ID
@@ -322,6 +294,7 @@ public class SecondFragment extends Fragment {
         data.setImg_prk(sp.getString(Config.SP_KEY_IMG_PAK, ""));
         // prk_area-주차구역
         data.setPrk_area(sp.getString(Config.SP_KEY_PRK_AREA, ""));
+        Log.i("로그", "getPrk_area : "+data.getPrk_area());
         // parking_chrge_bs_time-기본시간
         data.setParking_chrge_bs_time(sp.getInt(Config.SP_KEY_PARKING_CHRGE_BS_TIME, 0));
         // parking_chrge_bs_chrg-기본요금
@@ -465,6 +438,7 @@ public class SecondFragment extends Fragment {
 //                            Toast.makeText(getContext(), "저장 완료.", Toast.LENGTH_LONG).show();
                             if(data.getPrk_id()==0) {
                                 data.setPrk_id(dataListRes.getPrk_id());
+                                data.setPush_prk_id(dataListRes.getPrk_id());
                             }
                             writeSharedPreferences();
                             //알러트 다이얼로그(팝업)
@@ -519,16 +493,27 @@ public class SecondFragment extends Fragment {
         });
     }
 
+    void displayCreateViewParkingLot(){
+        if(data.getPrk_id()!=0) {
+            txtName.setText(data.getPrk_plce_nm());
+            txtAddr.setText(data.getPrk_plce_adres());
+            etxtArea.setText(data.getPrk_area());
+            if (!data.getImg_prk().isEmpty()) {
+                //클라이드 라이브러리 사용
+                GlideUrl url = new GlideUrl(data.getImg_prk(), new LazyHeaders.Builder().addHeader("User-Agent", "Android").build());
+                Glide.with(getActivity()).load(url).into(imgParking);
+            }
+        }else{
+            txtName.setText("");
+            txtAddr.setText("");
+            etxtArea.setText("");
+        }
+    }
+
     void displayParkingLot(){
         txtName.setText(data.getPrk_plce_nm());
         txtAddr.setText(data.getPrk_plce_adres());
         etxtArea.setText(data.getPrk_area());
-        if(!data.getImg_prk().isEmpty()) {
-            //클라이드 라이브러리 사용
-            imgParking.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            GlideUrl url=new GlideUrl(data.getImg_prk(), new LazyHeaders.Builder().addHeader("User-Agent", "Android").build());
-            Glide.with(getActivity()).load(url).into(imgParking);
-        }
     }
 
     //프로그래스다이얼로그 표시
@@ -544,27 +529,26 @@ public class SecondFragment extends Fragment {
     }
 
     void showImageChoiceMethod(){
-        //TODO : 에뮬레이터에는 카메라가 없어서 앨범으로 테스트 하기 위한 코드 이므로
         // 실제는 카메라만 사용한다.
         // camera(); 만  코딩하고 나머지는 주석처리 할것
-        androidx.appcompat.app.AlertDialog.Builder builder= new androidx.appcompat.app.AlertDialog.Builder(getContext());
-        builder.setTitle("프로필이미지");
-        builder.setItems(R.array.alert_photo, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if(i==0){
-                    //카메라을 선택하면 카메라앱 실행 사진 찍기
-                    //사진을 찍어 저장된 이미지를 이미지뷰에 보여준다.
+//        androidx.appcompat.app.AlertDialog.Builder builder= new androidx.appcompat.app.AlertDialog.Builder(getContext());
+//        builder.setTitle("프로필이미지");
+//        builder.setItems(R.array.alert_photo, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialogInterface, int i) {
+//                if(i==0){
+//                    //카메라을 선택하면 카메라앱 실행 사진 찍기
+//                    //사진을 찍어 저장된 이미지를 이미지뷰에 보여준다.
                     camera();
-                } else if(i==1){
-                    //앨범을 선택하면 앨범앱 실행 사진 선택
-                    //선택한 이미지를 이미지뷰에 보여준다.
-                    album();
-                }
-            }
-        });
-        androidx.appcompat.app.AlertDialog alert=builder.create();
-        alert.show();
+//                } else if(i==1){
+//                    //앨범을 선택하면 앨범앱 실행 사진 선택
+//                    //선택한 이미지를 이미지뷰에 보여준다.
+//                    album();
+//                }
+//            }
+//        });
+//        androidx.appcompat.app.AlertDialog alert=builder.create();
+//        alert.show();
     }
 
     private void camera(){
@@ -657,7 +641,7 @@ public class SecondFragment extends Fragment {
 
             photo = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
             imgParking.setImageBitmap(photo);
-            imgParking.setScaleType(ImageView.ScaleType.FIT_XY);
+//            imgParking.setScaleType(ImageView.ScaleType.FIT_XY);
 
             //카메라로 사진을 찍었다.. AWS 텍스트탐지 API호출하자...
             if(photoFile!=null){
@@ -687,10 +671,10 @@ public class SecondFragment extends Fragment {
                     Log.e(getClass().getSimpleName(), "Error writing bitmap", e);
                 }
 
-                imgParking.setImageBitmap(photo);
-                imgParking.setScaleType(ImageView.ScaleType.FIT_XY);
+                imgParking.setImageBitmap( getBitmapAlbum( imgParking, albumUri ) );
+                //imgParking.setScaleType(ImageView.ScaleType.FIT_XY);
 
-                //앨범에서 사진을 선택했다.. AWS 텍스트탐지 API호출하자...
+                //사진을 선택했으면.. AWS 텍스트탐지 API호출하자...
                 if(photoFile!=null){
                     getNetworkData(2);
                 }
@@ -759,6 +743,75 @@ public class SecondFragment extends Fragment {
         } catch ( Exception e ) {
             e.printStackTrace( );
             cursor.close( );
+            return null;
+        }
+    }
+
+    //이미지뷰에 뿌려질 앨범 비트맵 반환
+    public Bitmap getBitmapAlbum( View targetView, Uri uri ) {
+        try {
+            ParcelFileDescriptor parcelFileDescriptor = getActivity().getContentResolver( ).openFileDescriptor( uri, "r" );
+            if ( parcelFileDescriptor == null ) return null;
+            FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor( );
+            if ( fileDescriptor == null ) return null;
+
+            int targetW = targetView.getWidth( );
+            int targetH = targetView.getHeight( );
+
+            BitmapFactory.Options options = new BitmapFactory.Options( );
+            options.inJustDecodeBounds = true;
+
+            BitmapFactory.decodeFileDescriptor( fileDescriptor, null, options );
+
+            int photoW = options.outWidth;
+            int photoH = options.outHeight;
+
+            int scaleFactor = Math.min( photoW / targetW, photoH / targetH );
+            if ( scaleFactor >= 8 ) {
+                options.inSampleSize = 8;
+            } else if ( scaleFactor >= 4 ) {
+                options.inSampleSize = 4;
+            } else {
+                options.inSampleSize = 2;
+            }
+            options.inJustDecodeBounds = false;
+
+            Bitmap reSizeBit = BitmapFactory.decodeFileDescriptor( fileDescriptor, null, options );
+
+            ExifInterface exifInterface = null;
+            try {
+                if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ) {
+                    exifInterface = new ExifInterface( fileDescriptor );
+                }
+            } catch ( IOException e ) {
+                e.printStackTrace( );
+            }
+
+            int exifOrientation;
+            int exifDegree = 0;
+
+            //사진 회전값 구하기
+            if ( exifInterface != null ) {
+                exifOrientation = exifInterface.getAttributeInt( ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL );
+
+                if ( exifOrientation == ExifInterface.ORIENTATION_ROTATE_90 ) {
+                    exifDegree = 90;
+                } else if ( exifOrientation == ExifInterface.ORIENTATION_ROTATE_180 ) {
+                    exifDegree = 180;
+                } else if ( exifOrientation == ExifInterface.ORIENTATION_ROTATE_270 ) {
+                    exifDegree = 270;
+                }
+            }
+
+            parcelFileDescriptor.close( );
+            Matrix matrix = new Matrix( );
+            matrix.postRotate( exifDegree );
+
+            Bitmap reSizeExifBitmap = Bitmap.createBitmap( reSizeBit, 0, 0, reSizeBit.getWidth( ), reSizeBit.getHeight( ), matrix, true );
+            return reSizeExifBitmap;
+
+        } catch ( Exception e ) {
+            e.printStackTrace( );
             return null;
         }
     }
