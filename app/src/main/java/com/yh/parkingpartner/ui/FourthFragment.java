@@ -134,27 +134,26 @@ public class FourthFragment extends Fragment {
         btnEndParking = (Button) rootView.findViewById(R.id.btnEndParking);
         // Inflate the layout for this fragment
 
+        
 
-
-
-        Retrofit retrofit = NetworkClient.getRetrofitClient(getContext(),Config.PP_BASE_URL);
-        ApiFourthFragment api = retrofit.create(ApiFourthFragment.class);
-        Call<DataListRes> call = api.getPay(prkId);
-        call.enqueue(new Callback<DataListRes>() {
-            @Override
-            public void onResponse(Call<DataListRes> call, Response<DataListRes> response) {
-                Log.i("로그", "결과 : "+response.isSuccessful());
-                if(response.isSuccessful()){
-                    getNetworkData();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<DataListRes> call, Throwable t) {
-                t.printStackTrace();
-
-            }
-        });
+//        Retrofit retrofit = NetworkClient.getRetrofitClient(getContext(),Config.PP_BASE_URL);
+//        ApiFourthFragment api = retrofit.create(ApiFourthFragment.class);
+//        Call<DataListRes> call = api.getPay(prkId);
+//        call.enqueue(new Callback<DataListRes>() {
+//            @Override
+//            public void onResponse(Call<DataListRes> call, Response<DataListRes> response) {
+//                Log.i("로그", "결과 : "+response.isSuccessful());
+//                if(response.isSuccessful()){
+//                    getNetworkData();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<DataListRes> call, Throwable t) {
+//                t.printStackTrace();
+//
+//            }
+//        });
 
         btnCheckPay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -204,25 +203,25 @@ public class FourthFragment extends Fragment {
         SharedPreferences sp = getActivity().getSharedPreferences(Config.SP_NAME, getActivity().MODE_PRIVATE);
         prkId = sp.getInt(Config.SP_KEY_PRK_ID,0);
 
-        if (prkId == 0) {
-            AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-            alert.setTitle("주차 위치 정보 없음");
-            alert.setMessage("주차 완료 후, 사용해주세요.");
-            alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
+//        if (prkId == 0) {
+//            AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+//            alert.setTitle("주차 위치 정보 없음");
+//            alert.setMessage("주차 완료 후, 사용해주세요.");
+//            alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                    mainActivity.changeFragment(R.id.secondFragment, secondFragment);
+//                }
+//
+//            });
+//            //알러트 다이얼로그의 버튼을 안누르면, 화면이 넘어가지 않게..
+//            alert.setCancelable(false);
+//            alert.show();
+//            return;
+//        }
 
-                    mainActivity.changeFragment(R.id.secondFragment, secondFragment);
-                }
-
-            });
-            //알러트 다이얼로그의 버튼을 안누르면, 화면이 넘어가지 않게..
-            alert.setCancelable(false);
-            alert.show();
-            return;
-        }
-
-        
+        getNetworkData();
 
     }
 
