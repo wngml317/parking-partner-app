@@ -77,6 +77,7 @@ public class ReviewAddActivity extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 rating = ratingBar.getRating();
 
                 if (rating == 0) {
@@ -102,6 +103,9 @@ public class ReviewAddActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<PostRes> call, Response<PostRes> response) {
                         if (response.isSuccessful()) {
+
+                            Toast.makeText(ReviewAddActivity.this, "리뷰가 저장되었습니다.", Toast.LENGTH_SHORT).show();
+
                             Intent intent = new Intent(ReviewAddActivity.this, MypageActivity.class);
                             startActivity(intent);
                             finish();
@@ -126,5 +130,13 @@ public class ReviewAddActivity extends AppCompatActivity {
             finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        Intent intent = new Intent(ReviewAddActivity.this, MypageActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

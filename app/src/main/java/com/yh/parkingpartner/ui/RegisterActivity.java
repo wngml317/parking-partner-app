@@ -190,6 +190,21 @@ public class RegisterActivity extends AppCompatActivity {
                                 editor.putString(Config.SP_KEY_NAME, name);
                                 editor.putString(Config.SP_KEY_EMAIL, email);
                                 editor.putString(Config.SP_KEY_IMG_PROFILE, registerRes.getImg_profile());
+
+                                editor.putString(Config.SP_KEY_PRK_CENTER_ID, "");
+                                editor.putString(Config.SP_KEY_PRK_PLCE_NM, "");
+                                editor.putString(Config.SP_KEY_PRK_PLCE_ADRES, "");
+                                editor.putInt(Config.SP_KEY_PARKING_CHRGE_BS_TIME, 0);
+                                editor.putInt(Config.SP_KEY_PARKING_CHRGE_BS_CHRG, 0);
+                                editor.putInt(Config.SP_KEY_PARKING_CHRGE_ADIT_UNIT_TIME, 0);
+                                editor.putInt(Config.SP_KEY_PARKING_CHRGE_ADIT_UNIT_CHRGE, 0);
+                                editor.putInt(Config.SP_KEY_PARKING_CHRGE_ONE_DAY_CHRGE, 0);
+                                editor.putInt(Config.SP_KEY_PRK_ID,0);
+                                editor.putString(Config.SP_KEY_START_PRK_AT,"");
+                                editor.putString(Config.SP_KEY_IMG_PAK,"");
+                                editor.putString(Config.SP_KEY_PRK_AREA,"");
+
+                                editor.putInt(Config.SP_KEY_PUSH_PRK_ID,0);
                                 //저장한다.
                                 editor.apply();
 
