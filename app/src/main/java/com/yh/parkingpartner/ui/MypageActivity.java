@@ -302,9 +302,6 @@ public class MypageActivity extends AppCompatActivity {
                                 editor.putInt("prk_id", 0);
                                 editor.apply();
 
-                                prkId = sp.getInt(Config.SP_KEY_PRK_ID, 0);
-                                pushprkId = sp.getInt(Config.SP_KEY_PUSH_PRK_ID, 0);
-
                                 // 로그아웃 시, 메인 액티비티 종료
                                 MainActivity mainActivity = (MainActivity) MainActivity.activity;
                                 mainActivity.finish();
