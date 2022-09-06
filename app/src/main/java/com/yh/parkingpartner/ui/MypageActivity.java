@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.GlideUrl;
@@ -33,6 +34,10 @@ import com.yh.parkingpartner.model.Review;
 import com.yh.parkingpartner.model.ReviewListRes;
 import com.yh.parkingpartner.model.UserRes;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -44,7 +49,6 @@ public class MypageActivity extends AppCompatActivity {
 
     String accessToken;
     int prkId;
-    int pushprkId;
     RecyclerView recyclerView;
     ProgressBar progressBar;
     AdapterMypageList adapter;
@@ -106,12 +110,32 @@ public class MypageActivity extends AppCompatActivity {
                     btnTotal.setText("총 : " + data.getTotal_cnt());
                     btnWrite.setText("작성 : " + data.getWrite_cnt());
                     btnUnwritten.setText("미작성 : " + data.getUnwritten_cnt());
+                } else {
+                    try{
+                        JSONObject errorBody= new JSONObject(response.errorBody().string());
+                        Toast.makeText(MypageActivity.this,
+                                "에러발생\n"+
+                                        "코드 : "+response.code()+"\n" +
+                                        "내용 : "+errorBody.getString("error")
+                                , Toast.LENGTH_LONG).show();
+                        Log.i("로그", "에러발생 : "+response.code()+", "+errorBody.getString("error"));
+                    }catch (IOException | JSONException e){
+                        Toast.makeText(MypageActivity.this,
+                                "에러발생\n"+
+                                        "코드 : "+response.code()+"\n" +
+                                        "내용 : "+e.getMessage()
+                                , Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<MypageRes> call, Throwable t) {
-
+                //통신실패 네트워크 자체 문제로 실패되는 경우
+                Toast.makeText(MypageActivity.this, "시스템에러발생 : "+t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.i("로그", "시스템에러발생 : "+t.getMessage());
+                t.printStackTrace();
             }
         });
 
@@ -223,12 +247,33 @@ public class MypageActivity extends AppCompatActivity {
                             txtResult.setText("주차장 사용 이력이 없습니다.");
                         }
                     }
+                } else {
+                    try{
+                        JSONObject errorBody= new JSONObject(response.errorBody().string());
+                        Toast.makeText(MypageActivity.this,
+                                "에러발생\n"+
+                                        "코드 : "+response.code()+"\n" +
+                                        "내용 : "+errorBody.getString("error")
+                                , Toast.LENGTH_LONG).show();
+                        Log.i("로그", "에러발생 : "+response.code()+", "+errorBody.getString("error"));
+                    }catch (IOException | JSONException e){
+                        Toast.makeText(MypageActivity.this,
+                                "에러발생\n"+
+                                        "코드 : "+response.code()+"\n" +
+                                        "내용 : "+e.getMessage()
+                                , Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<ReviewListRes> call, Throwable t) {
-
+                //통신실패 네트워크 자체 문제로 실패되는 경우
+                progressBar.setVisibility(View.INVISIBLE);
+                Toast.makeText(MypageActivity.this, "시스템에러발생 : "+t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.i("로그", "시스템에러발생 : "+t.getMessage());
+                t.printStackTrace();
             }
         });
     }
@@ -254,12 +299,33 @@ public class MypageActivity extends AppCompatActivity {
                     reviewList.addAll(data.getItems());
                     offset = offset + count;
                     adapter.notifyDataSetChanged();
+                } else {
+                    try{
+                        JSONObject errorBody= new JSONObject(response.errorBody().string());
+                        Toast.makeText(MypageActivity.this,
+                                "에러발생\n"+
+                                        "코드 : "+response.code()+"\n" +
+                                        "내용 : "+errorBody.getString("error")
+                                , Toast.LENGTH_LONG).show();
+                        Log.i("로그", "에러발생 : "+response.code()+", "+errorBody.getString("error"));
+                    }catch (IOException | JSONException e){
+                        Toast.makeText(MypageActivity.this,
+                                "에러발생\n"+
+                                        "코드 : "+response.code()+"\n" +
+                                        "내용 : "+e.getMessage()
+                                , Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<ReviewListRes> call, Throwable t) {
+                //통신실패 네트워크 자체 문제로 실패되는 경우
                 progressBar.setVisibility(View.INVISIBLE);
+                Toast.makeText(MypageActivity.this, "시스템에러발생 : "+t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.i("로그", "시스템에러발생 : "+t.getMessage());
+                t.printStackTrace();
             }
         });
     }
@@ -310,12 +376,32 @@ public class MypageActivity extends AppCompatActivity {
                                 Intent intent = new Intent(MypageActivity.this, LoginActivity.class);
                                 startActivity(intent);
                                 finish();
+                            } else {
+                                try{
+                                    JSONObject errorBody= new JSONObject(response.errorBody().string());
+                                    Toast.makeText(MypageActivity.this,
+                                            "에러발생\n"+
+                                                    "코드 : "+response.code()+"\n" +
+                                                    "내용 : "+errorBody.getString("error")
+                                            , Toast.LENGTH_LONG).show();
+                                    Log.i("로그", "에러발생 : "+response.code()+", "+errorBody.getString("error"));
+                                }catch (IOException | JSONException e){
+                                    Toast.makeText(MypageActivity.this,
+                                            "에러발생\n"+
+                                                    "코드 : "+response.code()+"\n" +
+                                                    "내용 : "+e.getMessage()
+                                            , Toast.LENGTH_LONG).show();
+                                    e.printStackTrace();
+                                }
                             }
                         }
 
                         @Override
                         public void onFailure(Call<UserRes> call, Throwable t) {
-
+                            //통신실패 네트워크 자체 문제로 실패되는 경우
+                            Toast.makeText(MypageActivity.this, "시스템에러발생 : "+t.getMessage(), Toast.LENGTH_LONG).show();
+                            Log.i("로그", "시스템에러발생 : "+t.getMessage());
+                            t.printStackTrace();
                         }
                     });
                 }
@@ -327,7 +413,5 @@ public class MypageActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
 
 }

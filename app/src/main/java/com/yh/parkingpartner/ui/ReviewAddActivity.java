@@ -22,6 +22,11 @@ import com.yh.parkingpartner.config.Config;
 import com.yh.parkingpartner.model.PostRes;
 import com.yh.parkingpartner.model.Review;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -109,12 +114,32 @@ public class ReviewAddActivity extends AppCompatActivity {
                             Intent intent = new Intent(ReviewAddActivity.this, MypageActivity.class);
                             startActivity(intent);
                             finish();
+                        } else {
+                            try{
+                                JSONObject errorBody= new JSONObject(response.errorBody().string());
+                                Toast.makeText(ReviewAddActivity.this,
+                                        "에러발생\n"+
+                                                "코드 : "+response.code()+"\n" +
+                                                "내용 : "+errorBody.getString("error")
+                                        , Toast.LENGTH_LONG).show();
+                                Log.i("로그", "에러발생 : "+response.code()+", "+errorBody.getString("error"));
+                            }catch (IOException | JSONException e){
+                                Toast.makeText(ReviewAddActivity.this,
+                                        "에러발생\n"+
+                                                "코드 : "+response.code()+"\n" +
+                                                "내용 : "+e.getMessage()
+                                        , Toast.LENGTH_LONG).show();
+                                e.printStackTrace();
+                            }
                         }
                     }
 
                     @Override
                     public void onFailure(Call<PostRes> call, Throwable t) {
-
+                        //통신실패 네트워크 자체 문제로 실패되는 경우
+                        Toast.makeText(ReviewAddActivity.this, "시스템에러발생 : "+t.getMessage(), Toast.LENGTH_LONG).show();
+                        Log.i("로그", "시스템에러발생 : "+t.getMessage());
+                        t.printStackTrace();
                     }
                 });
             }
