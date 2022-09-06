@@ -250,6 +250,13 @@ public class SecondFragment extends Fragment {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.i("로그", "SecondFragment.onDestroy locationManager 리슨너 해제");
+        locationManager.removeUpdates(locationListener);
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
     }
@@ -360,7 +367,7 @@ public class SecondFragment extends Fragment {
             // 선택사진 AWS 텍스트감지
             if(photoFile!=null) {
                 //네트워크데이터를 보내고 있다는 프로그래스 다이얼로그를 먼저 띄운다..
-                showProgress("주차사진을 저장입니다...");
+                showProgress("주차사진을 저장 중입니다...");
             } else {
                 return;
             }
@@ -378,7 +385,7 @@ public class SecondFragment extends Fragment {
             //주차구역 입력값 셋팅
             data.setPrk_area(etxtArea.getText().toString());
 
-            showProgress("저장 중 입니다...");
+            showProgress("주차완료를 저장 중입니다...");
         }
 
         //api 호출

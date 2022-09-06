@@ -451,6 +451,13 @@ public class FirstFragment extends Fragment
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.i("로그", "FirstFragment.onDestroy locationManager 리슨너 해제");
+        locationManager.removeUpdates(locationListener);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
     }
