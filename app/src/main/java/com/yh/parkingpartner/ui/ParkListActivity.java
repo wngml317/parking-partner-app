@@ -242,7 +242,7 @@ public class ParkListActivity extends AppCompatActivity {
 
 
 
-        Call<DataListRes> call = api.getParkingList(37.5698848951,127.1839919249,order, offset, limit);
+        Call<DataListRes> call = api.getParkingList(latitude,longitude,order, offset, limit);
         call.enqueue(new Callback<DataListRes>() {
             @Override
             public void onResponse(Call<DataListRes> call, Response<DataListRes> response) {
@@ -258,6 +258,9 @@ public class ParkListActivity extends AppCompatActivity {
                     adapter.notifyDataSetChanged();
 
                 }
+
+
+
             }
 
             @Override
@@ -280,7 +283,6 @@ public class ParkListActivity extends AppCompatActivity {
             recyclerView.setAdapter(adapter);
         }
 
-        Log.i("로그","ParkList setDataToRecyclerView");
         progressBar.setVisibility(ProgressBar.GONE);
     }
 
