@@ -352,24 +352,24 @@ public class FirstFragment extends Fragment
             @Override
             public void onClick(View view) {
                 //목적지 검색 액티비티 호출
-//                Intent intent=new Intent(getContext(), SearchActivity.class);
-//                startActivityForResult(intent, Util.SEARCH_ACTIVITY_REQUEST_CODE);
+                Intent intent=new Intent(getContext(), SearchActivity.class);
+                startActivityForResult(intent, Util.SEARCH_ACTIVITY_REQUEST_CODE);
 
-                //구글라이브러리 Use an intent to launch the autocomplete activity
-                Places.initialize(getContext(), Config.GG_API_KEY, Locale.KOREA);
-               // Set the fields to specify which types of place data to
-                // return after the user has made a selection.
-                List<Place.Field> fields = Arrays.asList(Place.Field.NAME
-                        ,Place.Field.ADDRESS
-                        ,Place.Field.PHONE_NUMBER
-                        ,Place.Field.LAT_LNG
-                );
-                // Start the autocomplete intent.
-                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
-                        .setCountry("KR")
-                        .setHint("목적지 검색")
-                        .build(getContext());
-                startActivityForResult(intent, Util.AUTOCOMPLETE_REQUEST_CODE);
+//                //구글라이브러리 Use an intent to launch the autocomplete activity
+//                Places.initialize(getContext(), Config.GG_API_KEY, Locale.KOREA);
+//               // Set the fields to specify which types of place data to
+//                // return after the user has made a selection.
+//                List<Place.Field> fields = Arrays.asList(Place.Field.NAME
+//                        ,Place.Field.ADDRESS
+//                        ,Place.Field.PHONE_NUMBER
+//                        ,Place.Field.LAT_LNG
+//                );
+//                // Start the autocomplete intent.
+//                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+//                        .setCountry("KR")
+//                        .setHint("목적지 검색")
+//                        .build(getContext());
+//                startActivityForResult(intent, Util.AUTOCOMPLETE_REQUEST_CODE);
             }
         });
 

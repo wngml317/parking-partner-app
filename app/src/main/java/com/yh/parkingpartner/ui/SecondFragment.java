@@ -99,6 +99,7 @@ public class SecondFragment extends Fragment {
 
     boolean blnSearchParkingLot=true;
     boolean blnOnCreateView=false;
+    boolean blnCamera=false;
     // 주차완료정보 관련
     Data data=new Data();
 
@@ -267,7 +268,14 @@ public class SecondFragment extends Fragment {
         if(blnOnCreateView){
             blnOnCreateView=false;
             displayCreateViewParkingLot();
+            return;
         }
+
+//        if(blnCamera){
+//            blnCamera=false;
+//        }else{
+//
+//        }
     }
 
     void readSharedPreferences(){
@@ -624,6 +632,9 @@ public class SecondFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        blnCamera=true;
+
         if(requestCode == 100 && resultCode == Activity.RESULT_OK){
             Bitmap photo = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
             ExifInterface exif = null;
