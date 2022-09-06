@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -20,15 +21,15 @@
         <ImageView
             android:id="@+id/Lct_prk_img"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="373dp"
             android:layout_marginBottom="5dp"
-            android:layout_weight="1.2"
             android:src="@drawable/ic_location" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1.2"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="60dp"
+            android:layout_weight="0"
             android:backgroundTint="#88EAE4E4">
 
             <LinearLayout
@@ -63,7 +64,6 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="2"
-                        android:text="인천 서구 주차장"
                         android:textSize="17sp" />
                 </LinearLayout>
 
@@ -87,7 +87,6 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="2"
-                        android:text="업데이트 전입니다.."
                         android:textSize="17sp" />
 
                 </LinearLayout>
@@ -113,7 +112,6 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="2"
-                        android:text="업데이트 전입니다..."
                         android:textSize="17sp" />
 
                 </LinearLayout>
@@ -139,7 +137,6 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="업데이트 전입니다..."
                         android:textSize="17sp" />
                 </LinearLayout>
             </LinearLayout>

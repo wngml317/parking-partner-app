@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -24,6 +25,10 @@ import com.yh.parkingpartner.config.Config;
 import com.yh.parkingpartner.model.Data;
 import com.yh.parkingpartner.model.DataListRes;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -203,24 +208,6 @@ public class FourthFragment extends Fragment {
         SharedPreferences sp = getActivity().getSharedPreferences(Config.SP_NAME, getActivity().MODE_PRIVATE);
         prkId = sp.getInt(Config.SP_KEY_PRK_ID,0);
 
-//        if (prkId == 0) {
-//            AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-//            alert.setTitle("주차 위치 정보 없음");
-//            alert.setMessage("주차 완료 후, 사용해주세요.");
-//            alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialogInterface, int i) {
-//
-//                    mainActivity.changeFragment(R.id.secondFragment, secondFragment);
-//                }
-//
-//            });
-//            //알러트 다이얼로그의 버튼을 안누르면, 화면이 넘어가지 않게..
-//            alert.setCancelable(false);
-//            alert.show();
-//            return;
-//        }
-
         getNetworkData();
 
     }
@@ -236,16 +223,6 @@ public class FourthFragment extends Fragment {
             AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
             alert.setTitle("주차 위치 정보 없음");
             alert.setMessage("주차 완료 후, 사용해주세요.");
-            alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-
-                    mainActivity.changeFragment(R.id.secondFragment, secondFragment);
-                }
-
-            });
-            //알러트 다이얼로그의 버튼을 안누르면, 화면이 넘어가지 않게..
-            alert.setCancelable(false);
             alert.show();
             return;
         }
@@ -273,6 +250,23 @@ public class FourthFragment extends Fragment {
                         }
                     }
 
+                } else {
+                    try{
+                        JSONObject errorBody= new JSONObject(response.errorBody().string());
+                        Toast.makeText(getActivity(),
+                                "에러발생\n"+
+                                        "코드 : "+response.code()+"\n" +
+                                        "내용 : "+errorBody.getString("error")
+                                , Toast.LENGTH_LONG).show();
+                        Log.i("로그", "에러발생 : "+response.code()+", "+errorBody.getString("error"));
+                    }catch (IOException | JSONException e){
+                        Toast.makeText(getActivity(),
+                                "에러발생\n"+
+                                        "코드 : "+response.code()+"\n" +
+                                        "내용 : "+e.getMessage()
+                                , Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
                 }
             }
 
@@ -342,6 +336,23 @@ public class FourthFragment extends Fragment {
                         alert.show();
                     }
 
+                } else {
+                    try{
+                        JSONObject errorBody= new JSONObject(response.errorBody().string());
+                        Toast.makeText(getActivity(),
+                                "에러발생\n"+
+                                        "코드 : "+response.code()+"\n" +
+                                        "내용 : "+errorBody.getString("error")
+                                , Toast.LENGTH_LONG).show();
+                        Log.i("로그", "에러발생 : "+response.code()+", "+errorBody.getString("error"));
+                    }catch (IOException | JSONException e){
+                        Toast.makeText(getActivity(),
+                                "에러발생\n"+
+                                        "코드 : "+response.code()+"\n" +
+                                        "내용 : "+e.getMessage()
+                                , Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
                 }
             }
             @Override

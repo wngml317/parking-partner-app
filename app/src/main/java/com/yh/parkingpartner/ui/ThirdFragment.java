@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.GlideUrl;
@@ -29,6 +30,10 @@ import com.yh.parkingpartner.config.Config;
 import com.yh.parkingpartner.model.Data;
 import com.yh.parkingpartner.model.DataListRes;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -159,16 +164,6 @@ public class ThirdFragment extends Fragment {
             AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
             alert.setTitle("주차 위치 정보 없음");
             alert.setMessage("주차 완료 후, 사용해주세요.");
-            alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-
-                    mainActivity.changeFragment(R.id.secondFragment, secondFragment);
-                }
-
-            });
-            //알러트 다이얼로그의 버튼을 안누르면, 화면이 넘어가지 않게..
-            alert.setCancelable(false);
             alert.show();
             return;
         }
@@ -196,16 +191,33 @@ public class ThirdFragment extends Fragment {
                     //클라이드 라이브러리 사용
                     Lct_prk_img.setScaleType(ImageView.ScaleType.CENTER_CROP);
                     GlideUrl url=new GlideUrl(dataListRes.get(0).getImg_prk(), new LazyHeaders.Builder().addHeader("User-Agent", "Android").build());
-                    Glide.with(getActivity()).load(url).into(Lct_prk_img);}
+                    Glide.with(getActivity()).load(url).into(Lct_prk_img);
+                } else {
+                    try{
+                        JSONObject errorBody= new JSONObject(response.errorBody().string());
+                        Toast.makeText(getActivity(),
+                                "에러발생\n"+
+                                        "코드 : "+response.code()+"\n" +
+                                        "내용 : "+errorBody.getString("error")
+                                , Toast.LENGTH_LONG).show();
+                        Log.i("로그", "에러발생 : "+response.code()+", "+errorBody.getString("error"));
+                    }catch (IOException | JSONException e){
+                        Toast.makeText(getActivity(),
+                                "에러발생\n"+
+                                        "코드 : "+response.code()+"\n" +
+                                        "내용 : "+e.getMessage()
+                                , Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
+                }
 
 
 
 //                    DataListRes data = response.body();
 //                    count = data.getCount();
 //                    dataListRes.addAll(data.getItems());
-
-
             }
+
 
             @Override
             public void onFailure(Call<DataListRes> call, Throwable t) {
