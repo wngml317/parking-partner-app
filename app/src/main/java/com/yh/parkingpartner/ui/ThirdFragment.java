@@ -164,6 +164,7 @@ public class ThirdFragment extends Fragment {
             AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
             alert.setTitle("주차 위치 정보 없음");
             alert.setMessage("주차 완료 후, 사용해주세요.");
+            alert.setPositiveButton("Ok", null);
             alert.show();
             return;
         }
