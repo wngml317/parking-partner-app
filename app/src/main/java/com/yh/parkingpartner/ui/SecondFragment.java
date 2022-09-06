@@ -103,6 +103,8 @@ public class SecondFragment extends Fragment {
     // 주차완료정보 관련
     Data data=new Data();
 
+    LinearLayout linerLayoutMyLoc;
+    ImageView imgMyLoc;
     TextView txtName;
     TextView txtAddr;
     ImageView imgParking;
@@ -216,6 +218,8 @@ public class SecondFragment extends Fragment {
 
         blnOnCreateView=true;
 
+        linerLayoutMyLoc = rootView.findViewById(R.id.linerLayoutMyLoc);
+        imgMyLoc = rootView.findViewById(R.id.imgMyLoc);
         txtName = rootView.findViewById(R.id.txtName);
         txtAddr = rootView.findViewById(R.id.txtAddr);
         imgParking = rootView.findViewById(R.id.imgParking);
@@ -225,6 +229,10 @@ public class SecondFragment extends Fragment {
         imgParking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(data.getPrk_center_id().isEmpty()){
+                    Toast.makeText(getContext(), "현재 입차한 주차장정보를 수신하지 못했습니다.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 //카메라로 사진을 찍을 것인지, 앨범에서 사진을 가져올 것인지 선택할 수 있게 알러트 다이얼로그를 띄운다.
                 showImageChoiceMethod();
             }
@@ -233,6 +241,11 @@ public class SecondFragment extends Fragment {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(data.getPrk_center_id().isEmpty()){
+                    Toast.makeText(getContext(), "현재 입차한 주차장정보를 수신하지 못했습니다.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 if(data.getImg_prk().isEmpty()){
                     Toast.makeText(getContext(), "주차 사진이 없습니다.", Toast.LENGTH_SHORT).show();
                     return;
@@ -242,9 +255,20 @@ public class SecondFragment extends Fragment {
             }
         });
 
+        imgMyLoc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                blnSearchParkingLot=false;
+                showProgress("현재 GPS좌표를 수신 중입니다...");
+            }
+        });
+
         blnSearchParkingLot=(data.getPrk_id()==0 ? false : true);
         if(!blnSearchParkingLot){
+            linerLayoutMyLoc.setVisibility(View.VISIBLE);
             showProgress("현재 GPS좌표를 수신 중입니다...");
+        }else{
+            linerLayoutMyLoc.setVisibility(View.GONE);
         }
         // Inflate the layout for this fragment
         return rootView;
@@ -271,11 +295,20 @@ public class SecondFragment extends Fragment {
             return;
         }
 
-//        if(blnCamera){
-//            blnCamera=false;
-//        }else{
-//
-//        }
+        if(blnCamera){
+            blnCamera=false;
+            return;
+        }else{
+            blnSearchParkingLot=(data.getPrk_id()==0 ? false : true);
+            if(!blnSearchParkingLot){
+                showProgress("현재 GPS좌표를 수신 중입니다...");
+            }else{
+                //SharedPreferences 를 읽어온다.
+                readSharedPreferences();
+                displayCreateViewParkingLot();
+            }
+            return;
+        }
     }
 
     void readSharedPreferences(){
@@ -381,13 +414,13 @@ public class SecondFragment extends Fragment {
             }
         } else if(pApiGbn==3){
             // 저장
-            if(data.getImg_prk().isEmpty()){
-                Toast.makeText(getContext(), "주차 사진이 없습니다.", Toast.LENGTH_SHORT).show();
+            if(data.getPrk_center_id().isEmpty()){
+                Toast.makeText(getContext(), "현재 입차한 주차장정보를 수신하지 못했습니다.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            if(data.getPrk_center_id().isEmpty()){
-                Toast.makeText(getContext(), "현재 입차한 주차장정보를 수신하지 못했습니다.", Toast.LENGTH_SHORT).show();
+            if(data.getImg_prk().isEmpty()){
+                Toast.makeText(getContext(), "주차 사진이 없습니다.", Toast.LENGTH_SHORT).show();
                 return;
             }
             //주차구역 입력값 셋팅
@@ -438,31 +471,31 @@ public class SecondFragment extends Fragment {
                     DataListRes dataListRes=response.body();
                     if (dataListRes.getResult().equals("success")) {
                         if(pApiGbn==1) {
-                            Toast.makeText(getContext(), dataListRes.getCount() + "개의 주차장 정보 수신 완료.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), dataListRes.getCount() + "개의 주차장 정보 수신 완료.", Toast.LENGTH_SHORT).show();
                             data = (Data) dataListRes.getItems().get(0);
                             data.setPrk_id(0);
                             data.setImg_prk("");
                             data.setPrk_area("");
                             displayParkingLot();
                         }else if(pApiGbn==2) {
-                            Toast.makeText(getContext(), "주차사진 저장 완료.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), "주차사진 저장 완료.", Toast.LENGTH_SHORT).show();
                             data.setImg_prk(dataListRes.getImg_prk());
                             data.setPrk_area(dataListRes.getDetectedText());
                             displayParkingLot();
                         }else if(pApiGbn==3) {
 //                            Toast.makeText(getContext(), "저장 완료.", Toast.LENGTH_LONG).show();
-                            if(data.getPrk_id()==0) {
-                                data.setPrk_id(dataListRes.getPrk_id());
-                                data.setPush_prk_id(dataListRes.getPrk_id());
-                            }
-                            writeSharedPreferences();
                             //알러트 다이얼로그(팝업)
                             AlertDialog.Builder alert=new AlertDialog.Builder(getContext());
                             if(data.getPrk_id()==0) {
+                                data.setPrk_id(dataListRes.getPrk_id());
+                                data.setPush_prk_id(dataListRes.getPrk_id());
                                 alert.setTitle("주차완료 저장 성공");
                             }else{
                                 alert.setTitle("주차완료 수정 성공");
                             }
+                            writeSharedPreferences();
+                            linerLayoutMyLoc.setVisibility(View.GONE);
+
                             alert.setMessage("홈화면으로 이동하시겠습니까?");
                             alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
