@@ -233,7 +233,7 @@
 
                     <TextView
                         android:id="@+id/prk_center_id"
-                        android:layout_width="265dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="5dp"
@@ -262,7 +262,7 @@
 
                     <TextView
                         android:id="@+id/prk_plce_nm"
-                        android:layout_width="265dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="5dp"
@@ -292,7 +292,7 @@
 
                     <TextView
                         android:id="@+id/prk_plce_adres"
-                        android:layout_width="265dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="5dp"
@@ -322,7 +322,7 @@
 
                     <TextView
                         android:id="@+id/prk_cmprt_co"
-                        android:layout_width="80dp"
+                        android:layout_width="70dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="5dp"
@@ -343,7 +343,7 @@
 
                     <TextView
                         android:id="@+id/pkfc_Available_ParkingLots_total"
-                        android:layout_width="85dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="5dp"
@@ -373,7 +373,7 @@
 
                     <TextView
                         android:id="@+id/parking_chrge_bs_time"
-                        android:layout_width="80dp"
+                        android:layout_width="70dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="5dp"
@@ -394,7 +394,7 @@
 
                     <TextView
                         android:id="@+id/parking_chrge_bs_chrg"
-                        android:layout_width="85dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="5dp"
@@ -424,7 +424,7 @@
 
                     <TextView
                         android:id="@+id/parking_chrge_adit_unit_time"
-                        android:layout_width="80dp"
+                        android:layout_width="70dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="5dp"
@@ -445,7 +445,7 @@
 
                     <TextView
                         android:id="@+id/parking_chrge_adit_unit_chrge"
-                        android:layout_width="85dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="5dp"
@@ -475,7 +475,7 @@
 
                     <TextView
                         android:id="@+id/parking_chrge_one_day_chrge"
-                        android:layout_width="80dp"
+                        android:layout_width="70dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="5dp"
@@ -485,7 +485,7 @@
                         android:textSize="14dp" />
 
                     <TextView
-                        android:layout_width="90dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:gravity="left|center_vertical"
@@ -497,10 +497,11 @@
                     <RatingBar
                         android:id="@+id/avg_rating"
                         style="@android:style/Widget.Material.Light.RatingBar.Small"
-                        android:layout_width="83dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="left|center_vertical"
                         android:layout_marginLeft="5dp"
+                        android:layout_marginRight="10dp"
                         android:isIndicator="true"
                         android:max="5"
                         android:numStars="5"
