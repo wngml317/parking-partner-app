@@ -86,3 +86,6 @@ lint/tmp/
 # lint/reports/
 .idea/misc.xml
 .idea/deploymentTargetDropDown.xml
+
+# config
+app/src/main/java/com/yh/parkingpartner/config/Config.java
