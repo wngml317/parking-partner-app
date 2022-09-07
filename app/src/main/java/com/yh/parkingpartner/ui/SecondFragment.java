@@ -328,31 +328,54 @@ public class SecondFragment extends Fragment {
         data.setPrk_id(sp.getInt(Config.SP_KEY_PRK_ID, 0));
         // push_prk_id-최종 주차ID
         data.setPush_prk_id(sp.getInt(Config.SP_KEY_PUSH_PRK_ID,0));
-        //prk_center_id-주차장ID
-        data.setPrk_center_id(sp.getString(Config.SP_KEY_PRK_CENTER_ID, ""));
-        Log.i("로그", "getPrk_center_id : "+data.getPrk_center_id());
-        //prk_plce_nm-주차장명
-        data.setPrk_plce_nm(sp.getString(Config.SP_KEY_PRK_PLCE_NM, ""));
-        Log.i("로그", "getPrk_plce_nm : "+data.getPrk_plce_nm());
-        //prk_plce_adres-주차장주소
-        data.setPrk_plce_adres(sp.getString(Config.SP_KEY_PRK_PLCE_ADRES, ""));
-        // start_prk_at-입차시간
-        data.setStart_prk_at(sp.getString(Config.SP_KEY_START_PRK_AT, ""));
-        // Img_prk-주차사진URL
-        data.setImg_prk(sp.getString(Config.SP_KEY_IMG_PAK, ""));
-        // prk_area-주차구역
-        data.setPrk_area(sp.getString(Config.SP_KEY_PRK_AREA, ""));
-        Log.i("로그", "getPrk_area : "+data.getPrk_area());
-        // parking_chrge_bs_time-기본시간
-        data.setParking_chrge_bs_time(sp.getInt(Config.SP_KEY_PARKING_CHRGE_BS_TIME, 0));
-        // parking_chrge_bs_chrg-기본요금
-        data.setParking_chrge_bs_chrg(sp.getInt(Config.SP_KEY_PARKING_CHRGE_BS_CHRG, 0));
-        // parking_chrge_adit_unit_time-추가단위시간
-        data.setParking_chrge_adit_unit_time(sp.getInt(Config.SP_KEY_PARKING_CHRGE_ADIT_UNIT_TIME, 0));
-        // parking_chrge_adit_unit_chrge-추가단위요금
-        data.setParking_chrge_adit_unit_chrge(sp.getInt(Config.SP_KEY_PARKING_CHRGE_ADIT_UNIT_CHRGE, 0));
-        // parking_chrge_one_day_chrge-1일요금
-        data.setParking_chrge_one_day_chrge(sp.getInt(Config.SP_KEY_PARKING_CHRGE_ONE_DAY_CHRGE, 0));
+
+        if(data.getPrk_id()!=0) {
+            //prk_center_id-주차장ID
+            data.setPrk_center_id(sp.getString(Config.SP_KEY_PRK_CENTER_ID, ""));
+            //prk_plce_nm-주차장명
+            data.setPrk_plce_nm(sp.getString(Config.SP_KEY_PRK_PLCE_NM, ""));
+            //prk_plce_adres-주차장주소
+            data.setPrk_plce_adres(sp.getString(Config.SP_KEY_PRK_PLCE_ADRES, ""));
+            // start_prk_at-입차시간
+            data.setStart_prk_at(sp.getString(Config.SP_KEY_START_PRK_AT, ""));
+            // Img_prk-주차사진URL
+            data.setImg_prk(sp.getString(Config.SP_KEY_IMG_PAK, ""));
+            // prk_area-주차구역
+            data.setPrk_area(sp.getString(Config.SP_KEY_PRK_AREA, ""));
+            // parking_chrge_bs_time-기본시간
+            data.setParking_chrge_bs_time(sp.getInt(Config.SP_KEY_PARKING_CHRGE_BS_TIME, 0));
+            // parking_chrge_bs_chrg-기본요금
+            data.setParking_chrge_bs_chrg(sp.getInt(Config.SP_KEY_PARKING_CHRGE_BS_CHRG, 0));
+            // parking_chrge_adit_unit_time-추가단위시간
+            data.setParking_chrge_adit_unit_time(sp.getInt(Config.SP_KEY_PARKING_CHRGE_ADIT_UNIT_TIME, 0));
+            // parking_chrge_adit_unit_chrge-추가단위요금
+            data.setParking_chrge_adit_unit_chrge(sp.getInt(Config.SP_KEY_PARKING_CHRGE_ADIT_UNIT_CHRGE, 0));
+            // parking_chrge_one_day_chrge-1일요금
+            data.setParking_chrge_one_day_chrge(sp.getInt(Config.SP_KEY_PARKING_CHRGE_ONE_DAY_CHRGE, 0));
+        }else{
+            //prk_center_id-주차장ID
+            data.setPrk_center_id("");
+            //prk_plce_nm-주차장명
+            data.setPrk_plce_nm("");
+            //prk_plce_adres-주차장주소
+            data.setPrk_plce_adres("");
+            // start_prk_at-입차시간
+            data.setStart_prk_at("");
+            // Img_prk-주차사진URL
+            data.setImg_prk("");
+            // prk_area-주차구역
+            data.setPrk_area("");
+            // parking_chrge_bs_time-기본시간
+            data.setParking_chrge_bs_time(0);
+            // parking_chrge_bs_chrg-기본요금
+            data.setParking_chrge_bs_chrg(0);
+            // parking_chrge_adit_unit_time-추가단위시간
+            data.setParking_chrge_adit_unit_time(0);
+            // parking_chrge_adit_unit_chrge-추가단위요금
+            data.setParking_chrge_adit_unit_chrge(0);
+            // parking_chrge_one_day_chrge-1일요금
+            data.setParking_chrge_one_day_chrge(0);
+        }
     }
 
     void writeSharedPreferences(){
