@@ -156,16 +156,16 @@ public class LoginActivity extends AppCompatActivity {
                             try{
                                 JSONObject errorBody= new JSONObject(response.errorBody().string());
                                 Toast.makeText(getApplicationContext(),
-                                        "에러발생\n"+
-                                        "코드 : "+response.code()+"\n" +
-                                        "내용 : "+errorBody.getString("error")
+//                                        "에러발생\n"+
+//                                        "코드 : "+response.code()+"\n" +
+                                        "에러 : "+errorBody.getString("error")
                                         , Toast.LENGTH_LONG).show();
                                 Log.i("로그", "에러발생 : "+response.code()+", "+errorBody.getString("error"));
                             }catch (IOException | JSONException e){
                                 Toast.makeText(getApplicationContext(),
-                                        "에러발생\n"+
-                                                "코드 : "+response.code()+"\n" +
-                                                "내용 : "+e.getMessage()
+//                                        "에러발생\n"+
+//                                                "코드 : "+response.code()+"\n" +
+                                                "에러 : "+e.getMessage()
                                         , Toast.LENGTH_LONG).show();
                                 e.printStackTrace();
                             }
