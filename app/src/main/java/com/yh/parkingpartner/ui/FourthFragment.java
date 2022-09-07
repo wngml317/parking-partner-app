@@ -228,6 +228,8 @@ public class FourthFragment extends Fragment {
             return;
         }
 
+        showProgress("요금을 확인하는 중입니다.");
+
         Retrofit retrofit = NetworkClient.getRetrofitClient(getContext(),Config.PP_BASE_URL);
         ApiFourthFragment api = retrofit.create(ApiFourthFragment.class);
         Call<DataListRes> call = api.getPay(prkId);
@@ -235,6 +237,7 @@ public class FourthFragment extends Fragment {
             @Override
             public void onResponse(Call<DataListRes> call, Response<DataListRes> response) {
                 if (response.isSuccessful()) {
+                    dismissProgress();
                     dataList = response.body().getItems();
                     prkNm.setText(dataList.get(0).getPrk_plce_nm());
                     prkStart.setText(dataList.get(0).getStart_prk_at().replace("T"," ").substring(0, 16));
@@ -375,5 +378,8 @@ public class FourthFragment extends Fragment {
         progressDialog.show();
     }
     //프로그래스다이얼로그 숨기기
+    void dismissProgress(){
+        progressDialog.dismiss();
+    }
 
 }

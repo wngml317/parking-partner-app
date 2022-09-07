@@ -168,6 +168,7 @@ public class ThirdFragment extends Fragment {
             alert.show();
             return;
         }
+        showProgress("주차위치를 가져오는 중입니다.");
 
         dataListRes.clear();
         count = 1;
@@ -179,6 +180,7 @@ public class ThirdFragment extends Fragment {
             @Override
             public void onResponse(Call<DataListRes> call, Response<DataListRes> response) {
                 if (response.isSuccessful()) {
+                    dismissProgress();
                     Log.i("로그", "결과 : "+response.isSuccessful());
 
 
@@ -225,6 +227,18 @@ public class ThirdFragment extends Fragment {
 
             }
         });
+    }
+
+    //프로그래스다이얼로그 표시
+    void showProgress(String msg){
+        progressDialog=new ProgressDialog(getContext());
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setMessage(msg);
+        progressDialog.show();
+    }
+    //프로그래스다이얼로그 숨기기
+    void dismissProgress(){
+        progressDialog.dismiss();
     }
 
 }
