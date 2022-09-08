@@ -34,6 +34,8 @@
                 android:layout_weight="10"
                 android:background="@drawable/border"
                 android:hint="검색어 입력"
+                android:imeActionLabel="검색"
+                android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:lines="1"
                 android:maxLines="1"

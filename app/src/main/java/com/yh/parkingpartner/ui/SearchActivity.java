@@ -22,10 +22,14 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -120,8 +124,34 @@ public class SearchActivity extends AppCompatActivity {
                 next_page_token="";
                 dataList.clear();
                 setDataToRecyclerView(true);
+                etxtSearch.requestFocus();
+                InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                imm.showSoftInput(etxtSearch,0);
             }
         });
+
+        etxtSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                boolean handled=false;
+                if (i == EditorInfo.IME_ACTION_SEARCH) {
+                    String keyWord=textView.getText().toString().trim();
+                    if(keyWord.isEmpty()){
+                        Toast.makeText(getApplicationContext(), "검색어를 입력하세요.", Toast.LENGTH_LONG).show();
+                        handled=true;
+                    }else{
+                        getNetworkData(false);
+                        handled=false;
+                    }
+                }
+                return handled;
+            }
+        });
+
+        etxtSearch.setFocusableInTouchMode(true);
+        etxtSearch.requestFocus();
+        InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+        imm.showSoftInput(etxtSearch,0);
     }
 
     //액티비티 액션바 백버튼 클릭 함수 오버라이딩 코딩
