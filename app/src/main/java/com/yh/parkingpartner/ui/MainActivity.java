@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -148,6 +149,22 @@ public class MainActivity extends AppCompatActivity {
         if(itemId == R.id.my_page) {
             Intent intent = new Intent(MainActivity.this, MypageActivity.class);
             startActivity(intent);
+        }else if(itemId == R.id.infor) {
+            //알러트 다이얼로그(팝업)
+            AlertDialog.Builder alert=new AlertDialog.Builder(MainActivity.this);
+            alert.setTitle("앱 정보");
+            String content="연희직업전문학교(서구청라점)\n"+
+                    "클라우드 기반 인공지능 개발과 DevOps 실무과정\n"+
+                    "2기 5팀 최종 프로젝트\n"+
+                    "문의창구 : microchip1@naver.com\n\n"+
+                    "관심 가져 주셔서 감사합니다."
+                    ;
+            alert.setMessage(content);
+            alert.setPositiveButton("닫기", null);
+            //알러트 다이얼로그의 버튼을 안누르면, 화면이 넘어가지 않게..
+            alert.setCancelable(false);
+            //다이얼로그 화면에 보이기
+            alert.show();
         }
 
         return super.onOptionsItemSelected(item);

@@ -83,6 +83,14 @@ public class MypageActivity extends AppCompatActivity {
         txtEmail = findViewById(R.id.txtEmail);
         txtName = findViewById(R.id.txtName);
         imgProfile = findViewById(R.id.imgProfile);
+        imgProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(MypageActivity.this, RegisterActivity.class);
+                intent.putExtra("update", true);
+                startActivity(intent);
+            }
+        });
 
         //SharedPreferences 를 이용해서, 앱 내의 저장소에 영구저장된 데이터를 읽어오는 방법
         SharedPreferences sp = getApplication().getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
@@ -116,14 +124,14 @@ public class MypageActivity extends AppCompatActivity {
                         Toast.makeText(MypageActivity.this,
 //                                "에러발생\n"+
 //                                        "코드 : "+response.code()+"\n" +
-                                        "에러 : "+errorBody.getString("error")
+                                "에러 : "+errorBody.getString("error")
                                 , Toast.LENGTH_LONG).show();
                         Log.i("로그", "에러발생 : "+response.code()+", "+errorBody.getString("error"));
                     }catch (IOException | JSONException e){
                         Toast.makeText(MypageActivity.this,
 //                                "에러발생\n"+
 //                                        "코드 : "+response.code()+"\n" +
-                                        "에러 : "+e.getMessage()
+                                "에러 : "+e.getMessage()
                                 , Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
@@ -209,6 +217,13 @@ public class MypageActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        //SharedPreferences 를 이용해서, 앱 내의 저장소에 영구저장된 데이터를 읽어오는 방법
+        SharedPreferences sp = getApplication().getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+        txtName.setText(sp.getString(Config.SP_KEY_NAME, ""));
+        if (!sp.getString(Config.SP_KEY_IMG_PROFILE, "").equals("")) {
+            GlideUrl url = new GlideUrl(sp.getString(Config.SP_KEY_IMG_PROFILE, ""), new LazyHeaders.Builder().addHeader("User_Agent", "Android").build());
+            Glide.with(MypageActivity.this).load(url).placeholder(R.drawable.ic_baseline_person_24).into(imgProfile);
+        }
         getNetworkData();
     }
 
@@ -253,14 +268,14 @@ public class MypageActivity extends AppCompatActivity {
                         Toast.makeText(MypageActivity.this,
 //                                "에러발생\n"+
 //                                        "코드 : "+response.code()+"\n" +
-                                        "에러 : "+errorBody.getString("error")
+                                "에러 : "+errorBody.getString("error")
                                 , Toast.LENGTH_LONG).show();
                         Log.i("로그", "에러발생 : "+response.code()+", "+errorBody.getString("error"));
                     }catch (IOException | JSONException e){
                         Toast.makeText(MypageActivity.this,
 //                                "에러발생\n"+
 //                                        "코드 : "+response.code()+"\n" +
-                                        "에러 : "+e.getMessage()
+                                "에러 : "+e.getMessage()
                                 , Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
@@ -305,14 +320,14 @@ public class MypageActivity extends AppCompatActivity {
                         Toast.makeText(MypageActivity.this,
 //                                "에러발생\n"+
 //                                        "코드 : "+response.code()+"\n" +
-                                        "에러 : "+errorBody.getString("error")
+                                "에러 : "+errorBody.getString("error")
                                 , Toast.LENGTH_LONG).show();
                         Log.i("로그", "에러발생 : "+response.code()+", "+errorBody.getString("error"));
                     }catch (IOException | JSONException e){
                         Toast.makeText(MypageActivity.this,
 //                                "에러발생\n"+
 //                                        "코드 : "+response.code()+"\n" +
-                                        "에러 : "+e.getMessage()
+                                "에러 : "+e.getMessage()
                                 , Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
@@ -382,14 +397,14 @@ public class MypageActivity extends AppCompatActivity {
                                     Toast.makeText(MypageActivity.this,
 //                                            "에러발생\n"+
 //                                                    "코드 : "+response.code()+"\n" +
-                                                    "에러 : "+errorBody.getString("error")
+                                            "에러 : "+errorBody.getString("error")
                                             , Toast.LENGTH_LONG).show();
                                     Log.i("로그", "에러발생 : "+response.code()+", "+errorBody.getString("error"));
                                 }catch (IOException | JSONException e){
                                     Toast.makeText(MypageActivity.this,
 //                                            "에러발생\n"+
 //                                                    "코드 : "+response.code()+"\n" +
-                                                    "에러 : "+e.getMessage()
+                                            "에러 : "+e.getMessage()
                                             , Toast.LENGTH_LONG).show();
                                     e.printStackTrace();
                                 }

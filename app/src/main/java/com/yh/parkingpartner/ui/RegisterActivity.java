@@ -20,12 +20,14 @@ import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.text.InputType;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -35,6 +37,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.model.LazyHeaders;
 import com.yh.parkingpartner.R;
 import com.yh.parkingpartner.api.ApiRegisterActivity;
 import com.yh.parkingpartner.api.NetworkClient;
@@ -67,6 +72,7 @@ import retrofit2.Retrofit;
 
 public class RegisterActivity extends AppCompatActivity {
 
+    TextView txtTitle;
     EditText etxtEmail;
     EditText etxtPassword;
     EditText etxtPasswordConfirm;
@@ -81,6 +87,9 @@ public class RegisterActivity extends AppCompatActivity {
     //사진관련된 변수들
     private File photoFile;
 
+    boolean update;
+    boolean setpwd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +97,13 @@ public class RegisterActivity extends AppCompatActivity {
 
         this.getSupportActionBar().hide();
 
+        update=getIntent().getBooleanExtra("update", false);
+        Log.i("로그", "RegisterActivity.onCreate update="+update);
+
+        setpwd=getIntent().getBooleanExtra("setpwd", false);
+        Log.i("로그", "RegisterActivity.onCreate setpwd="+setpwd);
+
+        txtTitle=findViewById(R.id.txtTitle);
         etxtEmail=findViewById(R.id.etxtEmail);
         etxtPassword=findViewById(R.id.etxtPassword);
         etxtPasswordConfirm=findViewById(R.id.etxtPasswordConfirm);
@@ -95,6 +111,35 @@ public class RegisterActivity extends AppCompatActivity {
         imgProfile=findViewById(R.id.imgProfile);
         btnRegister=findViewById(R.id.btnRegister);
         btnLogin=findViewById(R.id.btnLogin);
+
+        if(update) {
+            txtTitle.setText("회원정보수정");
+            //SharedPreferences 를 이용해서, 앱 내의 저장소에 영구저장된 데이터를 읽어오는 방법
+            SharedPreferences sp = getApplication().getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+            etxtEmail.setText(sp.getString(Config.SP_KEY_EMAIL, ""));
+            etxtEmail.setInputType(InputType.TYPE_NULL);
+            etxtEmail.setFocusable(false);
+            etxtName.setText(sp.getString(Config.SP_KEY_NAME, ""));
+            if (!sp.getString(Config.SP_KEY_IMG_PROFILE, "").equals("")) {
+                GlideUrl url = new GlideUrl(sp.getString(Config.SP_KEY_IMG_PROFILE, ""), new LazyHeaders.Builder().addHeader("User_Agent", "Android").build());
+                Glide.with(getApplicationContext()).load(url).placeholder(R.drawable.ic_baseline_person_24).into(imgProfile);
+            }
+            btnRegister.setText("저장");
+            btnLogin.setVisibility(View.GONE);
+        }else if(setpwd){
+            txtTitle.setText("회원정보수정");
+            UserRes userinfo= (UserRes) getIntent().getSerializableExtra("userinfo");
+            etxtEmail.setText(userinfo.getEmail());
+            etxtEmail.setInputType(InputType.TYPE_NULL);
+            etxtEmail.setFocusable(false);
+            etxtName.setText(userinfo.getName());
+            if (!userinfo.getImg_profile().equals("")) {
+                GlideUrl url = new GlideUrl(userinfo.getImg_profile(), new LazyHeaders.Builder().addHeader("User_Agent", "Android").build());
+                Glide.with(getApplicationContext()).load(url).placeholder(R.drawable.ic_baseline_person_24).into(imgProfile);
+            }
+            btnRegister.setText("저장");
+            btnLogin.setVisibility(View.GONE);
+        }
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,8 +212,12 @@ public class RegisterActivity extends AppCompatActivity {
                 params.put("name", nameBody);
 
 //                Call<UserRes> call=api.register(photoBody, emailBody, pwdBody, nameBody);
-                Call<UserRes> call=api.register(photoBody, params);
-
+                Call<UserRes> call=null;
+                if(update || setpwd) {
+                    call = api.userinfo_update(photoBody, params);
+                }else{
+                    call = api.register(photoBody, params);
+                }
                 call.enqueue(new Callback<UserRes>() {
                     @Override
                     public void onResponse(Call<UserRes> call, Response<UserRes> response) {
@@ -182,49 +231,61 @@ public class RegisterActivity extends AppCompatActivity {
                             //엡을 삭제하기 전까지는 영구적으로 저장되며 앱을 삭제하면 같이 삭제 된다.
                             //저장소를 만든다.
                             if (registerRes.getResult().equals("success")) {
-                                SharedPreferences sp = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
-                                //편집기를 만든다.
-                                SharedPreferences.Editor editor = sp.edit();
-                                //작성한다.
-                                editor.putString(Config.SP_KEY_ACCESS_TOKEN, registerRes.getAccessToken());
-                                editor.putString(Config.SP_KEY_NAME, name);
-                                editor.putString(Config.SP_KEY_EMAIL, email);
-                                editor.putString(Config.SP_KEY_IMG_PROFILE, registerRes.getImg_profile());
+                                if(!setpwd) {
+                                    SharedPreferences sp = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+                                    //편집기를 만든다.
+                                    SharedPreferences.Editor editor = sp.edit();
+                                    if(!update) {
+                                        //작성한다.
+                                        editor.putString(Config.SP_KEY_ACCESS_TOKEN, registerRes.getAccessToken());
+                                        editor.putString(Config.SP_KEY_EMAIL, email);
+                                        editor.putString(Config.SP_KEY_IMG_PROFILE, registerRes.getImg_profile());
 
-                                editor.putString(Config.SP_KEY_PRK_CENTER_ID, "");
-                                editor.putString(Config.SP_KEY_PRK_PLCE_NM, "");
-                                editor.putString(Config.SP_KEY_PRK_PLCE_ADRES, "");
-                                editor.putInt(Config.SP_KEY_PARKING_CHRGE_BS_TIME, 0);
-                                editor.putInt(Config.SP_KEY_PARKING_CHRGE_BS_CHRG, 0);
-                                editor.putInt(Config.SP_KEY_PARKING_CHRGE_ADIT_UNIT_TIME, 0);
-                                editor.putInt(Config.SP_KEY_PARKING_CHRGE_ADIT_UNIT_CHRGE, 0);
-                                editor.putInt(Config.SP_KEY_PARKING_CHRGE_ONE_DAY_CHRGE, 0);
-                                editor.putInt(Config.SP_KEY_PRK_ID,0);
-                                editor.putString(Config.SP_KEY_START_PRK_AT,"");
-                                editor.putString(Config.SP_KEY_IMG_PAK,"");
-                                editor.putString(Config.SP_KEY_PRK_AREA,"");
-
-                                editor.putInt(Config.SP_KEY_PUSH_PRK_ID,0);
-                                //저장한다.
-                                editor.apply();
-
-                                //알러트 다이얼로그(팝업)
-                                AlertDialog.Builder alert=new AlertDialog.Builder(RegisterActivity.this);
-                                alert.setTitle("회원가입 성공");
-                                alert.setMessage(name+" 님 환영합니다.\n홈화면으로 이동합니다.");
-                                alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        Intent intent=new Intent(RegisterActivity.this, MainActivity.class);
-                                        startActivity(intent);
-                                        finish();
+                                        editor.putString(Config.SP_KEY_PRK_CENTER_ID, "");
+                                        editor.putString(Config.SP_KEY_PRK_PLCE_NM, "");
+                                        editor.putString(Config.SP_KEY_PRK_PLCE_ADRES, "");
+                                        editor.putInt(Config.SP_KEY_PARKING_CHRGE_BS_TIME, 0);
+                                        editor.putInt(Config.SP_KEY_PARKING_CHRGE_BS_CHRG, 0);
+                                        editor.putInt(Config.SP_KEY_PARKING_CHRGE_ADIT_UNIT_TIME, 0);
+                                        editor.putInt(Config.SP_KEY_PARKING_CHRGE_ADIT_UNIT_CHRGE, 0);
+                                        editor.putInt(Config.SP_KEY_PARKING_CHRGE_ONE_DAY_CHRGE, 0);
+                                        editor.putInt(Config.SP_KEY_PRK_ID, 0);
+                                        editor.putString(Config.SP_KEY_START_PRK_AT, "");
+                                        editor.putString(Config.SP_KEY_IMG_PAK, "");
+                                        editor.putString(Config.SP_KEY_PRK_AREA, "");
+                                        editor.putInt(Config.SP_KEY_PUSH_PRK_ID, 0);
+                                    }else{
+                                        if(photoFile!=null) {
+                                            editor.putString(Config.SP_KEY_IMG_PROFILE, registerRes.getImg_profile());
+                                        }
                                     }
-                                });
+                                    editor.putString(Config.SP_KEY_NAME, name);
+                                    //저장한다.
+                                    editor.apply();
+                                }
 
-                                //알러트 다이얼로그의 버튼을 안누르면, 화면이 넘어가지 않게..
-                                alert.setCancelable(false);
-                                //다이얼로그 화면에 보이기
-                                alert.show();
+                                if(!update && !setpwd) {
+                                    //알러트 다이얼로그(팝업)
+                                    AlertDialog.Builder alert = new AlertDialog.Builder(RegisterActivity.this);
+                                    alert.setTitle("회원가입 성공");
+                                    alert.setMessage(name + " 님 환영합니다.\n홈화면으로 이동합니다.");
+                                    alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                    });
+
+                                    //알러트 다이얼로그의 버튼을 안누르면, 화면이 넘어가지 않게..
+                                    alert.setCancelable(false);
+                                    //다이얼로그 화면에 보이기
+                                    alert.show();
+                                }else{
+                                    Toast.makeText(getApplicationContext(), "수정완료", Toast.LENGTH_LONG).show();
+                                    finish();
+                                }
                             }
 
                         } else {
@@ -233,14 +294,14 @@ public class RegisterActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(),
 //                                        "에러발생\n"+
 //                                                "코드 : "+response.code()+"\n" +
-                                                "에러 : "+errorBody.getString("error")
+                                        "에러 : "+errorBody.getString("error")
                                         , Toast.LENGTH_LONG).show();
                                 Log.i("로그", "에러발생 : "+response.code()+", "+errorBody.getString("error"));
                             }catch (IOException | JSONException e){
                                 Toast.makeText(getApplicationContext(),
 //                                        "에러발생\n"+
 //                                                "코드 : "+response.code()+"\n" +
-                                                "에러 : "+e.getMessage()
+                                        "에러 : "+e.getMessage()
                                         , Toast.LENGTH_LONG).show();
                                 e.printStackTrace();
                             }
